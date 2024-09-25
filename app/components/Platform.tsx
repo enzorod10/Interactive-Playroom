@@ -2,8 +2,8 @@ import * as PIXI from 'pixi.js';
 import { Graphics } from '@pixi/react';
 
 // Platform properties
-const platform1X = 100;
-const platform1Width = 100;
+// const platform1X = 100;
+// const platform1Width = 100;
 const platform2X = 300;
 const platform2Width = 100;
 const platformHeight = 50;

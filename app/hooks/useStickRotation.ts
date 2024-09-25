@@ -12,9 +12,9 @@ export default function useStickRotation(isRotating: boolean, onComplete: () => 
         const newRotation = prevRotation + 0.05;
 
         if (newRotation >= Math.PI / 2) {
-            setRotation(0)
-            onComplete(); // Trigger the callback when the stick reaches 90 degrees
-            return Math.PI / 2; // Clamp to 90 degrees
+          onComplete(); // Trigger the callback when the stick reaches 90 degrees
+          setRotation(0)
+          return Math.PI / 2; // Clamp to 90 degrees
         }
 
         return newRotation;
