@@ -1,9 +1,5 @@
 import { useState, useEffect } from 'react';
-
-interface Platform {
-  x: number;
-  width: number;
-}
+import { Platform } from '../../types/StickHero';
 
 const bonusAreaLength = 25;
 
