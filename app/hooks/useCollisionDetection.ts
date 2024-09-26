@@ -5,20 +5,17 @@ interface Platform {
   width: number;
 }
 
-const bonusAreaLength = 10;
+const bonusAreaLength = 25;
 
 const useCollisionDetection = (
   stickX: number,
   stickLength: number,
   platform: Platform, 
-  // isRotating: boolean 
 ) => {
   const [landedOnPlatform, setLandedOnPlatform] = useState(false);
   const [bonusPoints, setBonusPoints] = useState(false);
 
   useEffect(() => {
-    // if (!isRotating) return;
-
     const stickEndX = stickX + stickLength;
 
     // Check if the stick lands on the next platform
@@ -29,12 +26,13 @@ const useCollisionDetection = (
       setLandedOnPlatform(true);
 
       // Check if the stick lands in the bonus area
-
       const bonusStart = ((platform.width / 2) + platform.x) - (bonusAreaLength / 2);
       const bonusEnd = ((platform.width / 2) + platform.x) + (bonusAreaLength / 2);
 
       if (stickEndX >= bonusStart && stickEndX <= bonusEnd) {
         setBonusPoints(true);
+      } else {
+        setBonusPoints(false);
       }
     } else {
       setLandedOnPlatform(false);

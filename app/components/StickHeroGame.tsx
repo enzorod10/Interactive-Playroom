@@ -11,15 +11,21 @@ import useCollisionDetection from '../hooks/useCollisionDetection';
 const StickHeroGame = () => {
   const [stickHeight, setStickHeight] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
-  const [ballPosition, setBallPosition] = useState({ x: 180, y: window.innerHeight - 65 });
-  const [isFalling, setIsFalling] = useState(false);
+  const [ballPosition, setBallPosition] = useState({ x: 80, y: window.innerHeight - 165 });
+  
+  const [platform1, setPlatform1] = useState({ x: 0, width: 100 });
+  const [platform2, setPlatform2] = useState({ x: Math.floor(Math.random() * 200) + 300, width: Math.floor(Math.random() * 100) + 50});
+
+  const [score, setScore] = useState({ total: 0, bonusStreak: 0 })
+
+  const rightEdgeX = 100;
 
   const growIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Start growing the stick when mouse is pressed down
   const handleMouseDown = () => {
     growIntervalRef.current = setInterval(() => {
-      setStickHeight((prevHeight) => prevHeight + 5);
+      setStickHeight((prevHeight) => prevHeight + 10);
     }, 16);
   };
 
@@ -31,23 +37,19 @@ const StickHeroGame = () => {
 
   const stickRotation = useStickRotation(isRotating, () => {
     setIsRotating(false);
-    setStickHeight(0);
-
-    // Start moving the ball after stick is dropped
-    console.log('move')
+    setTimeout(() => setStickHeight(0), 250);
     moveBallAcrossBridge();
   });
 
   const { landedOnPlatform, bonusPoints } = useCollisionDetection(
-    200,
+    100,
     stickHeight,
-    { x: 300, width: 100 },
-    // isRotating
+    platform2,
   );
 
   const moveBallAcrossBridge = () => {
-    const targetX = stickHeight + ballPosition.x + 7.5; // Set this to the x position of the target platform
-    const duration = 500; // Duration for the ball to move
+    const targetX = landedOnPlatform ? platform2.x + platform2.width - 20 : stickHeight + ballPosition.x + 7.5;
+    const duration = 250; // Duration for the ball to move
     const startX = ballPosition.x;
 
     // Animate the ball movement
@@ -63,27 +65,28 @@ const StickHeroGame = () => {
       if (progress < 1) {
         requestAnimationFrame(animate);
       }
-      if (progress === 1){
+      else {
+        let total: number = 0;
+        let bonusStreak: number = 0;
         if (landedOnPlatform) {
-          console.log('Landed successfully!');
+          total = score.total++
           if (bonusPoints) {
-            console.log('Bonus points!');
+            bonusStreak = score.bonusStreak++
           }
-          setBallPosition(prev => ({...prev, x: 180}))
-        } else if (isRotating && !landedOnPlatform) {
-          console.log('Failed to land on the platform');
-          // setIsFalling(true);  // Start the falling animation
+          setScore({ total: total + bonusStreak, bonusStreak })
+          setTimeout(() => animatePlatformsWithCharacter(), 150)
+        } else {
+          setScore({ total: 0, bonusStreak: 0 })
           fallBall();
         }
       }
     };
-
     requestAnimationFrame(animate);
   };
 
   const fallBall = () => {
     const gravity = 9.8;  // You can adjust the gravity value to control the falling speed
-    const duration = 1000;  // Duration for the fall
+    const duration = 250;  // Duration for the fall
     const startY = ballPosition.y;
     const startTime = performance.now();
   
@@ -98,13 +101,58 @@ const StickHeroGame = () => {
       if (newY < window.innerHeight) {
         requestAnimationFrame(animateFall);
       } else {
-        setBallPosition(prev => ({ x: 180, y: window.innerHeight - 65 }))
-
-        setIsFalling(false);  // End the falling animation
+        setBallPosition(prev => ({ x: 80, y: window.innerHeight - 165 }))
       }
     };
   
     requestAnimationFrame(animateFall);
+  };
+
+    // Animate both the platforms and the character
+    const animatePlatformsWithCharacter = () => {
+      // Calculate the move distance based on the second platform's right edge
+      const platformMoveDistance = platform2.x + platform2.width - rightEdgeX;
+      const duration = 500; // Duration for the movement
+      const startPlatform1X = platform1.x;
+      const startPlatform2X = platform2.x;
+  
+      const startTime = performance.now();
+      const animate = (currentTime) => {
+        const elapsed = currentTime - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        
+        // Move platforms to the left
+        const newPlatform1X = startPlatform1X - progress * platformMoveDistance;
+        const newPlatform2X = startPlatform2X - progress * platformMoveDistance;
+  
+        // Move the character left along with the platform
+        const newBallX = (platform2.x + platform2.width - 20) - progress * (platform2.x + platform2.width - 100)
+        setPlatform1((prev) => ({ ...prev, x: newPlatform1X }));
+        setPlatform2((prev) => ({ ...prev, x: newPlatform2X }));
+        setBallPosition((prev) => ({ ...prev, x: newBallX }));
+  
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        } else {
+          resetPlatforms();
+        }
+      };
+  
+      requestAnimationFrame(animate);
+    };
+  
+  const resetPlatforms = () => {
+    const previousPlatform2 = { ...platform2 };
+
+    // Generate random platform size and distance for platform2
+    const newWidth = Math.floor(Math.random() * 100) + 50;  // Width between 50 and 150
+    const newX = Math.floor(Math.random() * 200) + 300;     // Distance between 300 and 500
+
+    // Set platform1's x so that its right edge stays fixed at rightEdgeX
+    setPlatform1({ x: rightEdgeX - previousPlatform2.width, width: previousPlatform2.width });
+
+    // Update platform2 with the new random values
+    setPlatform2({ x: newX, width: newWidth });
   };
 
   useEffect(() => {
@@ -122,30 +170,29 @@ const StickHeroGame = () => {
       style={{ width: '100%', height: '100vh', cursor: 'pointer' }}
     >
       <Stage width={window.innerWidth} height={window.innerHeight} options={{ backgroundColor: 0x1099bb }}>
-        {/* Character */}
-        <Character position={ballPosition} />
-        
         {/* Platform 1 */}
-        <Platform x={100} width={100}/>
+        <Platform id={0} x={platform1.x} width={platform1.width}/>
 
         {/* Platform 2 */}
-        <Platform x={300} width={100}/>
+        <Platform id={1} x={platform2.x} width={platform2.width}/>
+
+        {/* Character */}
+        <Character position={ballPosition} />
 
         {/* Stick */}
-        <Stick x={200} height={stickHeight} rotation={stickRotation}/>
+        <Stick x={100} height={stickHeight} rotation={stickRotation}/>
 
         <Text
-          text={0 + ''}
+          text={score.total + ''}
           anchor={0.5}
           x={150}
           y={150}
           style={
             new PIXI.TextStyle({
               align: 'center',
-              fontFamily: '"Source Sans Pro", Helvetica, sans-serif',
               fontSize: 50,
               fontWeight: '400',
-              fill: ['#ffffff', '#00ff99'], // gradient
+              fill: ['#000000', '#00ff99'], // gradient
             })
           }
         />
