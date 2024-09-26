@@ -1,9 +1,9 @@
 import * as PIXI from 'pixi.js';
-import { Graphics } from '@pixi/react';
+import { Graphics, Text } from '@pixi/react';
 
 const bonusAreaWidth = 25;
 
-export default function Platform({ id, x, width }: { id: number, x: number, width: number }) {
+export default function Platform({ id, x, width, bonusText }: { id: number, x: number, width: number, bonusText: { show: boolean, amount: number } }) {
   const drawPlatform = (g: PIXI.Graphics) => {
     g.clear();
     g.beginFill(0x333333); // Platform color
@@ -20,7 +20,25 @@ export default function Platform({ id, x, width }: { id: number, x: number, widt
   };
     
   return (
+    <>
       <Graphics zIndex={0} draw={(g) => drawPlatform(g)} />
-
+      {bonusText.show && id === 1 && (
+        <Text
+          text={`+${bonusText.amount}`} // Remove space between + and the number
+          x={(x + (width - bonusAreaWidth) / 2) + bonusAreaWidth / 2} 
+          y={window.innerHeight - 130}
+          anchor={[0.45, 0.5]} // Fine-tune the horizontal anchor
+          style={
+            new PIXI.TextStyle({
+              fontFamily: 'Courier New, monospace', // Optional: Use monospace font for consistent width
+              align: 'center',
+              fontSize: 20,
+              fontWeight: '600',
+              fill: '#ffcc00',
+            })
+          }
+        />
+      )}
+    </>
   );
 }

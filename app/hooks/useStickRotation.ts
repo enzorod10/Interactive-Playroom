@@ -9,7 +9,7 @@ export default function useStickRotation(isRotating: boolean, onComplete: () => 
     // Function to gradually rotate the stick
     const rotateStick = () => {
       setRotation((prevRotation) => {
-        const newRotation = prevRotation + 0.05;
+        const newRotation = prevRotation + 0.1;
 
         if (newRotation >= Math.PI / 2) {
           onComplete();

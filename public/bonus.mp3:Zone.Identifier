@@ -1,0 +1,4 @@
+[ZoneTransfer]
+ZoneId=3
+ReferrerUrl=https://cloudconvert.com/
+HostUrl=https://us-east.storage.cloudconvert.com/tasks/6aeac687-61c7-47a6-80a1-104ef691edad/478333__joao_janz__retro-reward-1_3.mp3?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=cloudconvert-production%2F20240926%2Fva%2Fs3%2Faws4_request&X-Amz-Date=20240926T043625Z&X-Amz-Expires=86400&X-Amz-Signature=0e80d978be55a815e50de9441413314d4d272113903a2a9dafbc8cdb0ff0ac44&X-Amz-SignedHeaders=host&response-content-disposition=attachment%3B%20filename%3D%22478333__joao_janz__retro-reward-1_3.mp3%22&response-content-type=audio%2Fmpeg&x-id=GetObject

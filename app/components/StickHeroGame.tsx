@@ -7,8 +7,16 @@ import Stick from './Stick';
 import Character from './Character';
 import useStickRotation from '../hooks/useStickRotation';
 import useCollisionDetection from '../hooks/useCollisionDetection';
+import sound from 'pixi-sound';
+
+// Load sounds
+sound.add('stick_growing', '/stick_growing.mp3');
+sound.add('stick_landing', { preload: true, url: '/stick_landing.mp3', volume: 0.4});
+sound.add('bonus_landing', { preload: true, url: '/bonus_landing.mp3' });
 
 const StickHeroGame = () => {
+  const [gameState, setGameState] = useState('waiting'); // Possible states: 'waiting', 'growing', 'rotating', 'moving'
+
   const [stickHeight, setStickHeight] = useState(0);
   const [isRotating, setIsRotating] = useState(false);
   const [ballPosition, setBallPosition] = useState({ x: 80, y: window.innerHeight - 165 });
@@ -17,28 +25,39 @@ const StickHeroGame = () => {
   const [platform2, setPlatform2] = useState({ x: Math.floor(Math.random() * 200) + 300, width: Math.floor(Math.random() * 100) + 50});
 
   const [score, setScore] = useState({ total: 0, bonusStreak: 0 })
+  const [bonusText, setBonusText] = useState({ show: false, amount: 0 });
 
   const rightEdgeX = 100;
 
   const growIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Start growing the stick when mouse is pressed down
+  // Start growing the stick only if the game is in the 'waiting' state
   const handleMouseDown = () => {
-    growIntervalRef.current = setInterval(() => {
-      setStickHeight((prevHeight) => prevHeight + 10);
-    }, 16);
+    if (gameState === 'waiting') {
+      sound.play('stick_growing', { loop: true });
+      setGameState('growing');
+      growIntervalRef.current = setInterval(() => {
+        setStickHeight((prevHeight) => prevHeight + 10);
+      }, 16);
+    }
   };
 
-  // Stop growing and start rotation when mouse is released
+  // Stop growing and start rotation only if the stick is currently growing
   const handleMouseUp = () => {
-    clearInterval(growIntervalRef.current as NodeJS.Timeout)
-    setIsRotating(true);
+    if (gameState === 'growing') {
+      sound.stop('stick_growing');
+      clearInterval(growIntervalRef.current as NodeJS.Timeout);
+      setIsRotating(true);
+      setGameState('rotating'); // Transition to the 'rotating' state
+    }
   };
 
   const stickRotation = useStickRotation(isRotating, () => {
+    sound.play('stick_landing');
     setIsRotating(false);
     setTimeout(() => setStickHeight(0), 250);
-    moveBallAcrossBridge();
+    moveBallAcrossBridge(); // Start moving the ball
+    setGameState('moving'); // Prevent the user from growing the stick during platform movement
   });
 
   const { landedOnPlatform, bonusPoints } = useCollisionDetection(
@@ -72,6 +91,10 @@ const StickHeroGame = () => {
           total = score.total++
           if (bonusPoints) {
             bonusStreak = score.bonusStreak++
+            sound.play('bonus_landing');
+            setBonusText({ show: true, amount: bonusStreak })
+            setTimeout(() => setBonusText({ show: false, amount: bonusStreak }), 600);
+
           }
           setScore({ total: total + bonusStreak, bonusStreak })
           setTimeout(() => animatePlatformsWithCharacter(), 150)
@@ -102,6 +125,8 @@ const StickHeroGame = () => {
         requestAnimationFrame(animateFall);
       } else {
         setBallPosition(prev => ({ x: 80, y: window.innerHeight - 165 }))
+        setGameState('waiting'); // Allow the game to reset after the ball falls
+
       }
     };
   
@@ -135,6 +160,7 @@ const StickHeroGame = () => {
           requestAnimationFrame(animate);
         } else {
           resetPlatforms();
+          setGameState('waiting'); // Allow growing the stick again
         }
       };
   
@@ -153,6 +179,8 @@ const StickHeroGame = () => {
 
     // Update platform2 with the new random values
     setPlatform2({ x: newX, width: newWidth });
+
+    setGameState('waiting'); // Set game state to 'waiting' after reset
   };
 
   useEffect(() => {
@@ -171,10 +199,10 @@ const StickHeroGame = () => {
     >
       <Stage width={window.innerWidth} height={window.innerHeight} options={{ backgroundColor: 0x1099bb }}>
         {/* Platform 1 */}
-        <Platform id={0} x={platform1.x} width={platform1.width}/>
+        <Platform id={0} x={platform1.x} width={platform1.width} bonusText={bonusText}/>
 
         {/* Platform 2 */}
-        <Platform id={1} x={platform2.x} width={platform2.width}/>
+        <Platform id={1} x={platform2.x} width={platform2.width} bonusText={bonusText}/>
 
         {/* Character */}
         <Character position={ballPosition} />
@@ -185,14 +213,14 @@ const StickHeroGame = () => {
         <Text
           text={score.total + ''}
           anchor={0.5}
-          x={150}
+          x={window.innerWidth / 2}
           y={150}
           style={
             new PIXI.TextStyle({
               align: 'center',
-              fontSize: 50,
+              fontSize: 75,
               fontWeight: '400',
-              fill: ['#000000', '#00ff99'], // gradient
+              fill: ['#000000']
             })
           }
         />
