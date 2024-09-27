@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Platform } from '../../types/StickHero';
+import { Platform } from '../types';
 
 const bonusAreaLength = 25;
 

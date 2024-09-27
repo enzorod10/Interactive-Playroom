@@ -1,10 +1,9 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Stage, Text } from '@pixi/react';
 import * as PIXI from 'pixi.js';
-
-import { GameState } from '../../types/StickHero';
+import { GameState } from '../types';
 
 import Platform from './Platform';
 import Stick from './Stick';
@@ -19,26 +18,28 @@ import { useAnimatePlatforms } from '../hooks/useAnimatePlatforms';
 import { useStickGrow } from '../hooks/useStickGrow';
 
 import sound from 'pixi-sound';
+import { characterHeight, platform1Edge, platform2MinimumWidth, platformHeightRatio } from '../data';
 
 sound.add('stick_growing', '/stick_growing.mp3');
 sound.add('stick_landing', { preload: true, url: '/stick_landing.mp3', volume: 0.4});
 sound.add('bonus_landing', { preload: true, url: '/bonus_landing.mp3' });
 
+const headerHeight = 48;
+
 const StickHeroGame = () => {
   const {width, height} = useWindowSize();
+  const canvaHeight = height! - headerHeight;
 
   const [gameState, setGameState] = useState<GameState>('waiting');
 
   const [stickHeight, setStickHeight] = useState(0);
-  const [ballPosition, setBallPosition] = useState({ x: 80, y: window.innerHeight - 165 });
+  const [ballPosition, setBallPosition] = useState({ x: 80, y: (canvaHeight) - ((canvaHeight * platformHeightRatio) + characterHeight) });
   
-  const [platform1, setPlatform1] = useState({ x: 0, width: 100 });
-  const [platform2, setPlatform2] = useState({ x: Math.floor(Math.random() * 200) + 300, width: Math.floor(Math.random() * 100) + 50});
+  const [platform1, setPlatform1] = useState({ x: 0, width: platform1Edge });
+  const [platform2, setPlatform2] = useState({ x: 200, width: 90});
 
   const [score, setScore] = useState({ total: 0, bonusStreak: 0 })
   const [bonusText, setBonusText] = useState({ show: false, amount: 0 });
-
-  const rightEdgeX = 100;
 
   const { startGrowing, stopGrowing } = useStickGrow(gameState, setGameState, setStickHeight, sound);
 
@@ -63,7 +64,7 @@ const StickHeroGame = () => {
   });
 
   const { landedOnPlatform, bonusPoints } = useCollisionDetection(
-    100,
+    platform1Edge,
     stickHeight,
     platform2,
   );
@@ -71,15 +72,17 @@ const StickHeroGame = () => {
   const resetPlatforms = () => {
     const previousPlatform2 = { ...platform2 };
 
-    // Generate random platform size and distance for platform2
-    const newWidth = Math.floor(Math.random() * 100) + 50;  // Width between 50 and 150
-    const newX = Math.floor(Math.random() * 200) + 300;     // Distance between 300 and 500
+    const maxPlatform2X = (width! > 800 ? 800 : width!) - 150;
+    const platform2X = Math.floor(Math.random() * (maxPlatform2X - platform1Edge)) + platform1Edge + platform2MinimumWidth;
+    let platform2Width = Math.floor(Math.random() * platform1Edge) + platform2MinimumWidth;
 
-    // Set platform1's x so that its right edge stays fixed at rightEdgeX
-    setPlatform1({ x: rightEdgeX - previousPlatform2.width, width: previousPlatform2.width });
+    // Make sure platform2 fits within the screen
+    if (platform2X + platform2Width > (width! > 800 ? 800 : width!)) {
+      platform2Width = (width! > 800 ? 800 : width!) - platform2X;
+    }
 
-    // Update platform2 with the new random values
-    setPlatform2({ x: newX, width: newWidth });
+    setPlatform1({ x: platform1Edge - previousPlatform2.width, width: previousPlatform2.width });
+    setPlatform2({ x: platform2X, width: platform2Width });
 
     setGameState('waiting');
   };
@@ -87,7 +90,7 @@ const StickHeroGame = () => {
   const { animatePlatformsWithCharacter } = useAnimatePlatforms(
     platform1,
     platform2,
-    rightEdgeX,
+    platform1Edge,
     setPlatform1,
     setPlatform2,
     setBallPosition,
@@ -95,36 +98,41 @@ const StickHeroGame = () => {
     setGameState
   );
   
-  const { moveBall } = useBallMovement({landedOnPlatform, platform2, stickHeight, ballPosition, setBallPosition, score, setScore, sound,setBonusText, bonusPoints, animatePlatformsWithCharacter, setGameState});
+  const { moveBall } = useBallMovement({canvaHeight: height! - headerHeight, landedOnPlatform, platform2, stickHeight, ballPosition, setBallPosition, score, setScore, sound,setBonusText, bonusPoints, animatePlatformsWithCharacter, setGameState});
+
+  useEffect(() => {
+    setBallPosition({ x: 80, y: (canvaHeight) - ((canvaHeight * platformHeightRatio) + characterHeight) })
+  }, [canvaHeight])
 
   return (
     <div
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      style={{ width: '100%', height: '100vh', cursor: 'pointer' }}
+      className='w-full h-full flex justify-center'
     >
-      <Stage width={window.innerWidth} height={window.innerHeight} options={{ backgroundColor: 0x1099bb }}>
+      <Stage className='rounded-md' width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x1099bb }}>
         {/* Platform 1 */}
-        <Platform id={0} x={platform1.x} width={platform1.width} bonusText={bonusText}/>
+        <Platform id={0} x={platform1.x} canvaHeight={canvaHeight} width={platform1.width} bonusText={bonusText}/>
 
         {/* Platform 2 */}
-        <Platform id={1} x={platform2.x} width={platform2.width} bonusText={bonusText}/>
+        <Platform id={1} x={platform2.x} canvaHeight={canvaHeight} width={platform2.width} bonusText={bonusText}/>
 
         {/* Character */}
         <Character position={ballPosition} />
 
         {/* Stick */}
-        <Stick x={100} height={stickHeight} rotation={stickRotation}/>
+        <Stick x={platform1Edge} height={stickHeight} canvaHeight={canvaHeight} rotation={stickRotation}/>
 
         <Text
           text={score.total + ''}
           anchor={0.5}
-          x={window.innerWidth / 2}
+          x={(width! > 800 ? 800 : width!) / 2}
           y={150}
           style={
             new PIXI.TextStyle({
               align: 'center',
-              fontSize: 75,
+              fontSize: 65,
+              fontFamily: "\"Comic Sans MS\", cursive, sans-serif",
               fontWeight: '400',
               fill: ['#000000']
             })

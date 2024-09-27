@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
-import { GameState, Platform, Position } from '../../types/StickHero';
+import { GameState, Platform, Position } from '../types';
 
 export function useAnimatePlatforms(
   platform1: Platform,
   platform2: Platform,
-  rightEdgeX: number,
+  platform1Edge: number,
   setPlatform1: React.Dispatch<React.SetStateAction<Platform>>,
   setPlatform2: React.Dispatch<React.SetStateAction<Platform>>,
   setBallPosition: React.Dispatch<React.SetStateAction<Position>>,
@@ -12,7 +12,7 @@ export function useAnimatePlatforms(
   setGameState: React.Dispatch<React.SetStateAction<GameState>>
 ) {
   const animatePlatformsWithCharacter = useCallback(() => {
-    const platformMoveDistance = platform2.x + platform2.width - rightEdgeX;
+    const platformMoveDistance = platform2.x + platform2.width - platform1Edge;
     const duration = 500; // Movement duration
     const startPlatform1X = platform1.x;
     const startPlatform2X = platform2.x;
@@ -44,7 +44,7 @@ export function useAnimatePlatforms(
     };
 
     requestAnimationFrame(animate);
-  }, [platform1, platform2, rightEdgeX, setPlatform1, setPlatform2, setBallPosition, resetPlatforms, setGameState]);
+  }, [platform1, platform2, platform1Edge, setPlatform1, setPlatform2, setBallPosition, resetPlatforms, setGameState]);
 
   return { animatePlatformsWithCharacter }
 }

@@ -1,7 +1,9 @@
 import { useCallback } from 'react';
-import { BonusText, GameState, Platform, Position, Score } from '../../types/StickHero';
+import { BonusText, GameState, Platform, Position, Score } from '../types';
+import { characterHeight, platformHeightRatio } from '../data';
 
 interface UseBallMovementParams {
+  canvaHeight: number;
   landedOnPlatform: boolean;
   platform2: Platform;
   stickHeight: number;
@@ -17,6 +19,7 @@ interface UseBallMovementParams {
 }
 
 export default function useBallMovement({
+  canvaHeight,
   landedOnPlatform,
   platform2,
   stickHeight,
@@ -46,17 +49,17 @@ export default function useBallMovement({
       const newY = startY + progress * gravity * (elapsed / 16); // Adjust gravity based on frame time
       setBallPosition((prev) => ({ ...prev, y: newY }));
 
-      if (newY < window.innerHeight) {
+      if (newY < canvaHeight) {
           requestAnimationFrame(animateFall);
       } else {
           // Reset ball position and game state
-          setBallPosition({ x: 80, y: window.innerHeight - 165 });
+          setBallPosition({ x: 80, y: canvaHeight - ((canvaHeight * platformHeightRatio) + characterHeight) });
           setGameState('waiting'); // Allow the game to reset after the ball falls
       }
   };
 
     requestAnimationFrame(animateFall);
-  }, [ballPosition, setBallPosition, setGameState]);
+  }, [ballPosition.y, canvaHeight, setBallPosition, setGameState]);
   
   // Move the ball across the bridge
   const moveBall = useCallback(() => {

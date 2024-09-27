@@ -16,8 +16,16 @@ export function useStickGrow(
       sound.play('stick_growing', { loop: true });
       setGameState('growing');
       growIntervalRef.current = setInterval(() => {
-        setStickHeight((prevHeight) => prevHeight + 10);
-      }, 16); // Approximately 60 FPS
+        setStickHeight((prevHeight) => {
+          if (prevHeight >= 1000) {
+            sound.stop('stick_growing');
+            clearInterval(growIntervalRef.current as NodeJS.Timeout);
+            setGameState('rotating');
+            return prevHeight;
+          }
+          return prevHeight + 10;
+        });
+      }, 14);
     }
   };
 
@@ -25,7 +33,7 @@ export function useStickGrow(
     if (gameState === 'growing') {
       sound.stop('stick_growing');
       clearInterval(growIntervalRef.current as NodeJS.Timeout);
-      setGameState('rotating'); // Transition to rotating state
+      setGameState('rotating');
     }
   };
 
