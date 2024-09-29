@@ -108,9 +108,9 @@ const StickHeroGame = () => {
     <div
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      className='w-full h-full flex justify-center'
+      className='w-full h-full flex justify-center bg-[#40ADC9]'
     >
-      <Stage className='rounded-md' width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x1099bb }}>
+      <Stage width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x40ADC9 }}>
         {/* Platform 1 */}
         <Platform id={0} x={platform1.x} canvaHeight={canvaHeight} width={platform1.width} bonusText={bonusText}/>
 

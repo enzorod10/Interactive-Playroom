@@ -23,9 +23,9 @@ export function useStickGrow(
             setGameState('rotating');
             return prevHeight;
           }
-          return prevHeight + 10;
+          return prevHeight + 5;
         });
-      }, 14);
+      }, 8);
     }
   };
 
