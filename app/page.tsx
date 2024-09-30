@@ -9,6 +9,9 @@ export default function Home() {
       <Link href='wordle' className="w-32 h-32 border-4 rounded-md flex justify-center items-center">
         Wordle
       </Link>
+      <Link href='trivia' className="w-32 h-32 border-4 rounded-md flex justify-center items-center">
+        Trivia
+      </Link>
     </div>
   );
 }

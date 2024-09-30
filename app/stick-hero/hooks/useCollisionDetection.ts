@@ -15,8 +15,8 @@ const useCollisionDetection = (
     const stickEndX = stickX + stickLength;
 
     // Check if the stick lands on the next platform
-    const platformStart = platform.x;
-    const platformEnd = platform.x + platform.width;
+    const platformStart = platform.x - 4;
+    const platformEnd = platform.x + platform.width + 4;
 
     if (stickEndX >= platformStart && stickEndX <= platformEnd) {
       setLandedOnPlatform(true);

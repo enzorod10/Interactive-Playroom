@@ -54,6 +54,20 @@ const StickHeroGame = () => {
       stopGrowing();
     }
    };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (gameState === 'waiting') {
+      startGrowing();
+    }
+  };
+  
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (gameState === 'growing') {
+      stopGrowing();
+    }
+  }
  
 
   const stickRotation = useStickRotation(gameState === 'rotating', () => {
@@ -108,7 +122,10 @@ const StickHeroGame = () => {
     <div
       onMouseDown={handleMouseDown}
       onMouseUp={handleMouseUp}
-      className='w-full h-full flex justify-center bg-[#40ADC9]'
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      className='w-full h-full flex justify-center bg-[#40ADC9] touch-none select-none'
+      style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }} // Disable default behaviors
     >
       <Stage width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x40ADC9 }}>
         {/* Platform 1 */}
