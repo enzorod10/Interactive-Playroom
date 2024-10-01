@@ -55,20 +55,17 @@ const StickHeroGame = () => {
     }
    };
 
-  const handleTouchStart = (e: React.TouchEvent) => {
-    e.preventDefault();
+  const handleTouchStart = () => {
     if (gameState === 'waiting') {
       startGrowing();
     }
   };
   
-  const handleTouchEnd = (e: React.TouchEvent) => {
-    e.preventDefault();
+  const handleTouchEnd = () => {
     if (gameState === 'growing') {
       stopGrowing();
     }
   }
- 
 
   const stickRotation = useStickRotation(gameState === 'rotating', () => {
     sound.play('stick_landing');
@@ -127,7 +124,7 @@ const StickHeroGame = () => {
       className='w-full h-full flex justify-center bg-[#40ADC9] touch-none select-none'
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }} // Disable default behaviors
     >
-      <Stage width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x40ADC9 }}>
+      <Stage style={{touchAction: 'none'}} width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x40ADC9 }}>
         {/* Platform 1 */}
         <Platform id={0} x={platform1.x} canvaHeight={canvaHeight} width={platform1.width} bonusText={bonusText}/>
 
@@ -148,8 +145,8 @@ const StickHeroGame = () => {
           style={
             new PIXI.TextStyle({
               align: 'center',
-              fontSize: 65,
-              fontFamily: "\"Comic Sans MS\", cursive, sans-serif",
+              fontSize: 36,
+              fontFamily: "\"Comic Sans MS\", sans-serif",
               fontWeight: '400',
               fill: ['#000000']
             })

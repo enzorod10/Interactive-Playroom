@@ -14,7 +14,6 @@ export default function Trivia() {
     const [questions, setQuestions] = useState([]);
     const [quizStarted, setQuizStarted] = useState(false);
 
-    // Construct the API URL based on options
     const buildApiUrl = () => {
         let url = `https://opentdb.com/api.php?amount=10`;
         if (options.id && options.id !== 8) {
@@ -26,22 +25,18 @@ export default function Trivia() {
         return url;
     };
 
-    // Fetch questions when "Start" button is clicked
     const handleStartClick = async () => {
         const apiUrl = buildApiUrl();
         const response = await fetch(apiUrl);
         const data = await response.json();
-        console.log(data)
         setQuestions(data.results);
         setQuizStarted(true);
     };
 
-
-    // Disable Start button if category or difficulty is not selected
     const isStartDisabled = !options.category || !options.difficulty;
 
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex flex-col items-center justify-center h-[calc(100dvh-48px)] w-full border-2 border-red-500">
             {!quizStarted ? (
                 <>
                     <div className="text-2xl font-semibold mb-4">Choose a Category</div>
@@ -56,7 +51,7 @@ export default function Trivia() {
                                 }`}
                                 onClick={() => setOptions((prev) => ({ ...prev, id: cat.id, category: cat.name }))}
                             >
-                                <cat.img className="h-12 w-12 mb-2 object-cover rounded-full" />
+                                <cat.img className="h-10 w-10 mb-2 object-cover rounded-full" />
                                 <div className="text-lg font-medium">{cat.name}</div>
                             </div>
                         ))}
