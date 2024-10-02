@@ -19,9 +19,6 @@ export default function Trivia() {
         if (options.id && options.id !== 8) {
             url += `&category=${options.id}`;
         }
-        if (options.difficulty && options.difficulty !== 'Any') {
-            url += `&difficulty=${options.difficulty.toLowerCase()}`;
-        }
         return url;
     };
 
@@ -33,44 +30,30 @@ export default function Trivia() {
         setQuizStarted(true);
     };
 
-    const isStartDisabled = !options.category || !options.difficulty;
+    const isStartDisabled = !options.category;
 
     return (
-        <div className="flex flex-col items-center justify-center h-[calc(100dvh-48px)] w-full border-2 border-red-500">
+        <div className="h-[calc(100dvh-48px)] w-full overflow-hidden">
             {!quizStarted ? (
-                <>
-                    <div className="text-2xl font-semibold mb-4">Choose a Category</div>
-                    <div className="flex flex-wrap justify-center gap-4 mb-8">
-                        {categories.map((cat) => (
-                            <div
-                                key={cat.id}
-                                className={`flex flex-col items-center p-4 rounded-lg shadow-md cursor-pointer transition ${
-                                    options.id === cat.id
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-white hover:bg-gray-200'
-                                }`}
-                                onClick={() => setOptions((prev) => ({ ...prev, id: cat.id, category: cat.name }))}
-                            >
-                                <cat.img className="h-10 w-10 mb-2 object-cover rounded-full" />
-                                <div className="text-lg font-medium">{cat.name}</div>
-                            </div>
-                        ))}
-                    </div>
-                    <div className="text-2xl font-semibold mb-4">Choose a Difficulty</div>
-                    <div className="flex gap-6 mb-8">
-                        {['Any', 'Easy', 'Medium', 'Hard'].map((difficulty) => (
-                            <div
-                                key={difficulty}
-                                className={`px-6 py-3 rounded-lg shadow-md text-lg font-medium cursor-pointer transition ${
-                                    options.difficulty === difficulty
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-white hover:bg-gray-200'
-                                }`}
-                                onClick={() => setOptions((prev) => ({ ...prev, difficulty }))}
-                            >
-                                {difficulty}
-                            </div>
-                        ))}
+                <div className='flex flex-col h-full p-4 sm:mx-auto max-w-2xl justify-evenly gap-4'>
+                    <div className='flex flex-col gap-4 overflow-hidden'>
+                        <div className="text-xl font-semibold w-full text-center">Choose a Category</div>
+                        <div className="flex flex-wrap justify-center gap-4 overflow-auto">
+                            {categories.map((cat) => (
+                                <div
+                                    key={cat.id}
+                                    className={`flex flex-col h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-lg shadow-md border cursor-pointer transition ${
+                                        options.id === cat.id
+                                            ? 'bg-blue-500 text-white'
+                                            : 'bg-white hover:bg-gray-200'
+                                    }`}
+                                    onClick={() => setOptions((prev) => ({ ...prev, id: cat.id, category: cat.name }))}
+                                >
+                                    <cat.img className="h-8 w-8" />
+                                    <div className="text-sm">{cat.name}</div>
+                                </div>
+                            ))}
+                        </div>
                     </div>
                     <button
                         type="button"
@@ -84,7 +67,7 @@ export default function Trivia() {
                     >
                         Start
                     </button>
-                </>
+                </div>
             ) : <QuizSection questions={questions}/>}
         </div>
     );

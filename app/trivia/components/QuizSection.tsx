@@ -47,21 +47,21 @@ export default function QuizSection({ questions }: QuizSectionTypes) {
         }
     }, [currentQuestionIndex, questions.length, score])
 
-    useEffect(() => {
-        if (timeRemaining === 0) {
-            moveToNextQuestion(false);
-            return;
-        }
+    // useEffect(() => {
+    //     if (timeRemaining === 0) {
+    //         moveToNextQuestion(false);
+    //         return;
+    //     }
 
-        const timer = setTimeout(() => {
-            setTimeRemaining(timeRemaining - 1);
-        }, 1000);
+    //     const timer = setTimeout(() => {
+    //         setTimeRemaining(timeRemaining - 1);
+    //     }, 1000);
 
-        return () => clearTimeout(timer);
-    }, [timeRemaining, currentQuestionIndex, moveToNextQuestion]);
+    //     return () => clearTimeout(timer);
+    // }, [timeRemaining, currentQuestionIndex, moveToNextQuestion]);
 
     return (
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center border h-full max-w-2xl sm:mx-auto">
             <div className="text-xl font-bold mb-4">Time remaining: {timeRemaining}s</div>
             <div className="text-lg font-medium mb-4">
                 Question {currentQuestionIndex + 1} of {questions.length}
