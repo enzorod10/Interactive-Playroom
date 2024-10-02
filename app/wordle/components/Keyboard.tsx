@@ -19,7 +19,7 @@ export default function Keyboard() {
 
     function Set2(){
         return(
-            <div className="flex justify-center">
+            <div className="flex justify-center w-[90%] mx-auto">
                 {
                     set2.map((char,index) => <Key big={false} key={index} letter={char} />)
                 }
@@ -41,7 +41,7 @@ export default function Keyboard() {
     }
   
     return (
-        <div>
+        <div className='px-1 pb-2'>
             <Set1/>
             <Set2/>
             <Set3/>
