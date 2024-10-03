@@ -21,44 +21,44 @@ export default function QuizSection({ questions }: QuizSectionTypes) {
             : ['True', 'False'];
     }, [correct_answer, incorrect_answers, type]);
 
-    const handleAnswerClick = (answer: string) => {
-        setDisabledAnswers(true);
-        setSelectedAnswer(answer);
-
-        // Check if the answer is correct and update score
-        if (answer === correct_answer) {
-            setScore(score + 1);
-        }
-
-        // Move to the next question after a short delay
-        setTimeout(() => {
-            moveToNextQuestion(answer === correct_answer);
-        }, 1000);
-    };
-
-    const moveToNextQuestion = useCallback((isCorrect: boolean) => {
+    const moveToNextQuestion = useCallback(() => {
         setDisabledAnswers(false);
         setSelectedAnswer(null);
         setTimeRemaining(11);
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            alert(`Quiz complete! Your score: ${score + (isCorrect ? 1 : 0)} / ${questions.length}`);
+            alert(`Quiz complete! Your final score: ${score} / ${questions.length}`);
         }
-    }, [currentQuestionIndex, questions.length, score])
-
+    }, [currentQuestionIndex, questions.length, score]);
+    
+    const handleAnswerClick = (answer: string) => {
+        setDisabledAnswers(true);
+        setSelectedAnswer(answer);
+    
+        // Check if the answer is correct and update the score
+        if (answer === correct_answer) {
+            setScore((prevScore) => prevScore + 1);
+        }
+    
+        // Move to the next question after a short delay
+        setTimeout(() => {
+            moveToNextQuestion();
+        }, 1000);
+    };
+    
     useEffect(() => {
         if (timeRemaining === 0) {
-            moveToNextQuestion(false);
+            moveToNextQuestion();
             return;
         }
-
+    
         const timer = setTimeout(() => {
-            setTimeRemaining(timeRemaining - 1);
+            setTimeRemaining((prevTime) => prevTime - 1);
         }, 1000);
-
+    
         return () => clearTimeout(timer);
-    }, [timeRemaining, currentQuestionIndex, moveToNextQuestion]);
+    }, [timeRemaining, moveToNextQuestion]);
 
     const timePercentage = ((timeRemaining - 1) / 10) * 100;
 
