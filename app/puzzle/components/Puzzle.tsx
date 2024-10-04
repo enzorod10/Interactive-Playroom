@@ -5,6 +5,40 @@ import * as PIXI from "pixi.js";
 import PuzzlePiece from "./PuzzlePiece";
 
 const Puzzle = ({ rows = 4, cols = 4, pieceWidth = 100, pieceHeight = 100, snapThreshold = 20 }) => {
+    const createJigsawMask = (pieceWidth, pieceHeight, row, col, rows, cols) => {
+        const mask = new PIXI.Graphics();
+        
+        // Draw the basic rectangular shape
+        mask.beginFill(0xffffff);
+        mask.drawRect(0, 0, pieceWidth, pieceHeight);
+        
+        // Add jigsaw knobs (just a simple circular shape for example)
+        const knobSize = pieceWidth * 0.2;
+    
+        // Top knob (if it's not the first row)
+        if (row > 0) {
+            mask.drawCircle(pieceWidth / 2, 0, knobSize);
+        }
+        
+        // Bottom knob (if it's not the last row)
+        if (row < rows - 1) {
+            mask.drawCircle(pieceWidth / 2, pieceHeight, knobSize);
+        }
+    
+        // Left knob (if it's not the first column)
+        if (col > 0) {
+            mask.drawCircle(0, pieceHeight / 2, knobSize);
+        }
+    
+        // Right knob (if it's not the last column)
+        if (col < cols - 1) {
+            mask.drawCircle(pieceWidth, pieceHeight / 2, knobSize);
+        }
+        
+        mask.endFill();
+        return mask;
+    };
+    
     const sliceImage = () => {
         const texture = PIXI.Texture.from('/ninja.jpg');
         const pieces = [];
