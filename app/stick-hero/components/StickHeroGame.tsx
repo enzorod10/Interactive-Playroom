@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 
 import { Stage, Text } from '@pixi/react';
 import * as PIXI from 'pixi.js';
-import { GameState } from '../types';
 
 import Platform from './Platform';
 import Stick from './Stick';
@@ -19,6 +18,7 @@ import { useStickGrow } from '../hooks/useStickGrow';
 
 import sound from 'pixi-sound';
 import { characterHeight, platform1Edge, platform2MinimumWidth, platformHeightRatio } from '../data';
+import { useStickHeroContext } from '../StickHeroContext';
 
 sound.add('stick_growing', '/stick_growing.mp3');
 sound.add('stick_landing', { preload: true, url: '/stick_landing.mp3', volume: 0.4});
@@ -30,7 +30,7 @@ const StickHeroGame = () => {
   const {width, height} = useWindowSize();
   const canvaHeight = height! - headerHeight;
 
-  const [gameState, setGameState] = useState<GameState>('waiting');
+  const { gameState, setGameState, score, setScore } = useStickHeroContext();
 
   const [stickHeight, setStickHeight] = useState(0);
   const [ballPosition, setBallPosition] = useState({ x: 80, y: (canvaHeight) - ((canvaHeight * platformHeightRatio) + characterHeight) });
@@ -38,7 +38,6 @@ const StickHeroGame = () => {
   const [platform1, setPlatform1] = useState({ x: 0, width: platform1Edge });
   const [platform2, setPlatform2] = useState({ x: 200, width: 90});
 
-  const [score, setScore] = useState({ total: 0, bonusStreak: 0 })
   const [bonusText, setBonusText] = useState({ show: false, amount: 0 });
 
   const { startGrowing, stopGrowing } = useStickGrow(gameState, setGameState, setStickHeight, sound);
@@ -87,7 +86,6 @@ const StickHeroGame = () => {
     const platform2X = Math.floor(Math.random() * (maxPlatform2X - platform1Edge)) + platform1Edge + platform2MinimumWidth;
     let platform2Width = Math.floor(Math.random() * platform1Edge) + platform2MinimumWidth;
 
-    // Make sure platform2 fits within the screen
     if (platform2X + platform2Width > (width! > 800 ? 800 : width!)) {
       platform2Width = (width! > 800 ? 800 : width!) - platform2X;
     }

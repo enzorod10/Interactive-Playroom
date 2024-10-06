@@ -18,4 +18,4 @@ export interface BonusText {
     amount: number;
   }
   
-export type GameState = 'waiting' | 'growing' | 'rotating' | 'moving';
+export type GameState = 'waiting' | 'growing' | 'rotating' | 'moving' | 'paused' | 'postGame';

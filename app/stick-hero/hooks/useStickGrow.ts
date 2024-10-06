@@ -1,7 +1,6 @@
 import { useRef, useEffect } from 'react';
 import Sound from 'pixi-sound'; // Adjust import based on your setup
-
-type GameState = 'waiting' | 'growing' | 'rotating' | 'moving';
+import { GameState } from '../types';
 
 export function useStickGrow(
   gameState: GameState,
