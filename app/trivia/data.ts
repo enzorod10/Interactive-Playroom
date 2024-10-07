@@ -5,8 +5,9 @@ import { MdOutlineSportsBasketball, MdHistoryEdu  } from "react-icons/md";
 import { RiGovernmentFill  } from "react-icons/ri";
 import { TbUserStar } from "react-icons/tb";
 import { FaDog, FaCar } from "react-icons/fa";
+import { Category } from "./types";
 
-export const categories = [
+export const categories: Category[] = [
     { id: 9, name: 'General', img: GiPerspectiveDiceSixFacesRandom }, 
     { id: 10, name: 'Books', img: GiBookCover },
     { id: 11, name: 'Film', img: GiFilmProjector }, 

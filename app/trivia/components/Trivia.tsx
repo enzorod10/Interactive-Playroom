@@ -1,23 +1,39 @@
 'use client';
 import { useState } from 'react';
-import { categories } from "../data";
+import { categories as categoriesListed } from "../data";
 import QuizSection from './QuizSection';
-
-interface optionsType {
-    id: number | undefined;
-    category: string | undefined;
-    difficulty: string | undefined;
-}
+import { Category } from '../types';
 
 export default function Trivia() {
-    const [options, setOptions] = useState<optionsType>({ id: undefined, category: undefined, difficulty: undefined });
+
+    const [selectedCategory, setSelectedCategory] = useState<Category | undefined>(undefined)
+
     const [questions, setQuestions] = useState([]);
     const [quizStarted, setQuizStarted] = useState(false);
 
+    const grabCategories = () => {
+        return categoriesListed.map((cat) => {
+            const lastQuizData = localStorage.getItem(`quiz_${cat.id}`);
+            if (lastQuizData) {
+                const { date, score } = JSON.parse(lastQuizData);
+                const today = new Date().toLocaleDateString();
+                if (date === today) {
+                    return {...cat, score }
+                } else {
+                    return {...cat, score: undefined }
+                }
+            } else {
+                return {...cat, score: undefined }
+            }
+        })
+    }
+
+    const [categories, setCategories] = useState<Category[]>(grabCategories);
+
     const buildApiUrl = () => {
         let url = `https://opentdb.com/api.php?amount=10`;
-        if (options.id && options.id !== 8) {
-            url += `&category=${options.id}`;
+        if (selectedCategory && selectedCategory.id !== 8) {
+            url += `&category=${selectedCategory.id}`;
         }
         return url;
     };
@@ -30,7 +46,15 @@ export default function Trivia() {
         setQuizStarted(true);
     };
 
-    const isStartDisabled = !options.category;
+    const handleQuizComplete = (id: number, score: number) => {
+        const today = new Date().toLocaleDateString();
+        localStorage.setItem(`quiz_${id}`, JSON.stringify({ date: today, score }));
+        setCategories(grabCategories);
+        setSelectedCategory(undefined);
+        setQuizStarted(false);
+    };
+
+    console.log(categories)
 
     return (
         <div className="h-[calc(100dvh-48px)] w-full overflow-hidden">
@@ -42,15 +66,18 @@ export default function Trivia() {
                             {categories.map((cat) => (
                                 <div
                                     key={cat.id}
-                                    className={`flex flex-col h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-lg shadow-md border cursor-pointer transition ${
-                                        options.id === cat.id
+                                    className={`flex flex-col relative ${cat.score !== undefined && cat.score !== null ? 'bg-zinc-500 text-white' : 'cursor-pointer'} h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-lg shadow-md border transition ${
+                                        selectedCategory?.id === cat.id
                                             ? 'bg-blue-500 text-white'
-                                            : 'bg-white hover:bg-gray-200'
+                                            : `bg-white ${cat.score ? '' : 'hover:bg-gray-200'}`
                                     }`}
-                                    onClick={() => setOptions((prev) => ({ ...prev, id: cat.id, category: cat.name }))}
-                                >
+                                    onClick={cat.score !== undefined && cat.score !== null  ? undefined : () => setSelectedCategory(cat)}>
                                     <cat.img className="h-8 w-8" />
                                     <div className="text-sm">{cat.name}</div>
+                                    {cat.score !== undefined && cat.score !== null  && 
+                                    <div className={`absolute diagonal-fractions -top-2 text-lg -right-2 bg-white rounded-full px-1 ${cat.score < 6 ? 'text-red-500' : 'text-green-500' }`}>
+                                        {cat.score + '/10'}
+                                    </div>}
                                 </div>
                             ))}
                         </div>
@@ -58,17 +85,18 @@ export default function Trivia() {
                     <button
                         type="button"
                         className={`text-white bg-gradient-to-r from-cyan-500 to-blue-500 font-medium rounded-lg text-lg px-6 py-3 transition ${
-                            isStartDisabled
+                            !selectedCategory
                                 ? 'opacity-50 cursor-not-allowed'
                                 : 'hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800'
                         }`}
                         onClick={handleStartClick}
-                        disabled={isStartDisabled}
-                    >
+                        disabled={selectedCategory === undefined}>
                         Start
                     </button>
                 </div>
-            ) : <QuizSection questions={questions}/>}
+            ) : (
+                <QuizSection selectedCategory={selectedCategory!} questions={questions} onComplete={handleQuizComplete} />
+            )}
         </div>
     );
 }

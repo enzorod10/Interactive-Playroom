@@ -1,11 +1,14 @@
+'use client';
 import { useState, useMemo, useEffect, useCallback } from 'react';
-import { Question } from '../types';
+import { Category, Question } from '../types';
 
 interface QuizSectionTypes{
     questions: Question[];
+    onComplete: (id: number, score: number) => void;
+    selectedCategory: Category;
 }
 
-export default function QuizSection({ questions }: QuizSectionTypes) {
+export default function QuizSection({ selectedCategory, questions, onComplete }: QuizSectionTypes) {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState<null | string>(null);
     const [score, setScore] = useState(0);
@@ -28,20 +31,18 @@ export default function QuizSection({ questions }: QuizSectionTypes) {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            alert(`Quiz complete! Your final score: ${score} / ${questions.length}`);
+            onComplete(selectedCategory.id, score);
         }
-    }, [currentQuestionIndex, questions.length, score]);
+    }, [currentQuestionIndex, onComplete, questions.length, score, selectedCategory.id]);
     
     const handleAnswerClick = (answer: string) => {
         setDisabledAnswers(true);
         setSelectedAnswer(answer);
     
-        // Check if the answer is correct and update the score
         if (answer === correct_answer) {
             setScore((prevScore) => prevScore + 1);
         }
     
-        // Move to the next question after a short delay
         setTimeout(() => {
             moveToNextQuestion();
         }, 1000);

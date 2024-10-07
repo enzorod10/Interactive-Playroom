@@ -148,6 +148,7 @@ const Puzzle = () => {
                                 pieceHeight={pieceDimensions.height}
                                 texture={piece.texture}
                                 isSelected={selectedPieces.some(selectedPiece => selectedPiece && !showCorrectImage && selectedPiece === piece)}
+                                correctPosition={piece.correctPosition}
                                 position={piece.correctPosition}
                                 handlePieceClick={handlePieceClick}
                                 index={index}
@@ -162,6 +163,7 @@ const Puzzle = () => {
                                 texture={piece.texture}
                                 isSelected={selectedPieces.some(selectedPiece => selectedPiece && selectedPiece === piece)}
                                 position={piece.currentPosition}
+                                correctPosition={piece.correctPosition}
                                 handlePieceClick={handlePieceClick}
                                 index={index}
                             />

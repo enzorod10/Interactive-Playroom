@@ -1,38 +1,48 @@
 'use client';
-import { createContext, useState, useContext, ReactNode, useEffect, useCallback } from 'react';
-import { dictionary } from '../data';
+import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import _ from 'lodash';
-
-interface WordleWrapperProps {
-  children: ReactNode;
-}
+import { dictionary } from '../data';
+import { GameState } from '../types';
 
 interface WordleContextType {
   guessTheWord: (char: string) => void;
   pressEnter: () => void;
   completedRows: number[];
   currentRow: number;
-  letterStatus: {[key: string]: string};
+  letterStatus: { [key: string]: string };
   word: string;
   guessWord: string;
   backspace: () => void;
+  gameState: GameState;
+  setGameState: React.Dispatch<React.SetStateAction<GameState>>;
+  currentStreak: number;
+  highStreak: number;
 }
 
 export const WordleContext = createContext<WordleContextType | undefined>(undefined);
 
-export const WordleWrapper: React.FC<WordleWrapperProps> = ({ children }) => {
+export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [word, setWord] = useState(_.sample(dictionary)?.toUpperCase() || '');
   const [completedRows, setCompletedRows] = useState<number[]>([]);
   const [guessWord, setGuessWord] = useState<string>('');
   const [currentRow, setCurrentRow] = useState<number>(0);
   const [letterStatus, setLetterStatus] = useState<{ [key: string]: string }>({});
+  const [gameState, setGameState] = useState<GameState>('playing');
+  
+  // Streak states
+  const [currentStreak, setCurrentStreak] = useState<number>(() => {
+    return parseInt(localStorage.getItem('currentStreak') || '0');
+  });
+  const [highStreak, setHighStreak] = useState<number>(() => {
+    return parseInt(localStorage.getItem('highStreak') || '0');
+  });
 
   const updateLetterStatus = useCallback(() => {
     const newStatus = { ...letterStatus };
     for (let i = 0; i < guessWord.length; i++) {
       const guessedLetter = guessWord[i];
       const correctLetter = word[i];
-  
+
       if (guessedLetter === correctLetter) {
         newStatus[guessedLetter] = '#6AAA64';
       } else if (word.includes(guessedLetter)) {
@@ -55,19 +65,47 @@ export const WordleWrapper: React.FC<WordleWrapperProps> = ({ children }) => {
     if (currentRow > 5) return alert('You have unfortunately exhausted all your trials. Press refresh to try again.');
     if (guessWord.length < 5) return;
     if (!dictionary.includes(guessWord.toLowerCase())) return alert('Word not found');
-  
-    if (guessWord === word) alert('Congratulations you got it');
-  
+
+    if (guessWord === word) {
+      alert('Congratulations, you got it!');
+
+      // Increment current streak
+      setCurrentStreak(prevStreak => {
+        const newStreak = prevStreak + 1;
+        localStorage.setItem('currentStreak', newStreak.toString());
+        return newStreak;
+      });
+
+      // Update high streak if needed
+      setHighStreak(prevHigh => {
+        const newHigh = Math.max(prevHigh, currentStreak + 1);
+        localStorage.setItem('highStreak', newHigh.toString());
+        return newHigh;
+      });
+      
+      // Reset for next word (or keep going depending on your logic)
+      setWord(_.sample(dictionary)?.toUpperCase() || '');
+      setCompletedRows([]);
+      setCurrentRow(0);
+      setGuessWord('');
+    } else if (currentRow === 5) {
+      alert('Game over!');
+
+      // Reset current streak
+      setCurrentStreak(0);
+      localStorage.setItem('currentStreak', '0');
+    }
+
     updateLetterStatus();
     setCurrentRow(currentRow + 1);
     setCompletedRows((prevRows) => [...prevRows, currentRow]);
-  
-    setGuessWord('');
-  }, [currentRow, guessWord, word, updateLetterStatus]);
 
-const backspace = useCallback((): void => {
-  setGuessWord(guessWord.slice(0, guessWord.length - 1));
-}, [guessWord]);
+    setGuessWord('');
+  }, [currentRow, guessWord, word, currentStreak, updateLetterStatus]);
+
+  const backspace = useCallback((): void => {
+    setGuessWord(guessWord.slice(0, guessWord.length - 1));
+  }, [guessWord]);
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
@@ -77,7 +115,7 @@ const backspace = useCallback((): void => {
         pressEnter();
       } else if (key === 'Backspace') {
         backspace();
-      } else if (/^[a-zA-Z]$/.test(key)) { // Only handle letter keys
+      } else if (/^[a-zA-Z]$/.test(key)) {
         guessTheWord(key.toUpperCase());
       }
     }
@@ -98,17 +136,21 @@ const backspace = useCallback((): void => {
       letterStatus,
       word,
       guessWord,
-      backspace
+      backspace,
+      gameState,
+      setGameState,
+      currentStreak,
+      highStreak
     }}>
-      { children }
+      {children}
     </WordleContext.Provider>
   );
-}
+};
 
 export const useWordleContext = () => {
-    const context = useContext(WordleContext);
-    if (!context) {
-      throw new Error('useWordleContext must be used within a WordleContext.Provider');
-    }
-    return context;
-}
+  const context = useContext(WordleContext);
+  if (!context) {
+    throw new Error('useWordleContext must be used within a WordleWrapper');
+  }
+  return context;
+};
