@@ -1,7 +1,7 @@
-import Puzzle from "./components/Puzzle";
+import Menu from "./components/Menu";
 
 export default function Home() {
     return (
-        <Puzzle />
+        <Menu />
     );
 }
