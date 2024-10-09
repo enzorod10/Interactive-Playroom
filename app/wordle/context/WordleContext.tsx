@@ -30,12 +30,16 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
   const [gameState, setGameState] = useState<GameState>('playing');
   
   // Streak states
-  const [currentStreak, setCurrentStreak] = useState<number>(() => {
-    return parseInt(localStorage.getItem('currentStreak') || '0');
-  });
-  const [highStreak, setHighStreak] = useState<number>(() => {
-    return parseInt(localStorage.getItem('highStreak') || '0');
-  });
+  const [currentStreak, setCurrentStreak] = useState<number>(0);
+  const [highStreak, setHighStreak] = useState<number>(0);
+
+  // Load streaks from localStorage after the component mounts
+  useEffect(() => {
+    const savedCurrentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
+    const savedHighStreak = parseInt(localStorage.getItem('highStreak') || '0');
+    setCurrentStreak(savedCurrentStreak);
+    setHighStreak(savedHighStreak);
+  }, []);
 
   const updateLetterStatus = useCallback(() => {
     const newStatus = { ...letterStatus };
@@ -97,7 +101,6 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
     updateLetterStatus();
     setCurrentRow(currentRow + 1);
     setCompletedRows((prevRows) => [...prevRows, currentRow]);
-
     setGuessWord('');
   }, [currentRow, guessWord, word, currentStreak, updateLetterStatus]);
 
