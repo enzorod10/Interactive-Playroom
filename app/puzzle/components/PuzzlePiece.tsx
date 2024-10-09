@@ -15,6 +15,7 @@ interface PuzzlePieceProps{
 
 const PuzzlePiece = ({ texture, position, index, handlePieceClick, pieceWidth, pieceHeight, isSelected }: PuzzlePieceProps) => {
   const pieceRef = useRef<PIXI.Sprite | null>(null);
+  const moveAnimationRef = useRef<number | null>(null);
 
   useEffect(() => {
       const piece = pieceRef.current;
@@ -45,19 +46,49 @@ const PuzzlePiece = ({ texture, position, index, handlePieceClick, pieceWidth, p
       }
   }, [isSelected]);
 
+  useEffect(() => {
+    const piece = pieceRef.current;
+    if (!piece) return;
+
+    // Target position
+    const targetX = (position.col + 0.5) * pieceWidth;
+    const targetY = (position.row + 0.5) * pieceHeight;
+
+    const startX = piece.x;
+    const startY = piece.y;
+
+    const duration = 100;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+
+      const newX = startX + progress * (targetX - startX);
+      const newY = startY + progress * (targetY - startY);
+      piece.x = newX;
+      piece.y = newY;
+
+      if (progress < 1) {
+        moveAnimationRef.current = requestAnimationFrame(animate);
+      }
+    };
+
+    moveAnimationRef.current = requestAnimationFrame(animate);
+    return () => cancelAnimationFrame(moveAnimationRef.current as number);
+  }, [pieceHeight, pieceWidth, position]);
+
   return (
-      <Sprite
-          ref={pieceRef}
-          texture={texture}
-          x={(position.col + 0.5) * pieceWidth}
-          y={(position.row + 0.5) * pieceHeight}
-          zIndex={0}
-          anchor={0.5} 
-          width={pieceWidth}
-          height={pieceHeight}
-          interactive={true}
-          pointerdown={() => handlePieceClick(index)}
-      />
+    <Sprite
+      ref={pieceRef}
+      texture={texture}
+      zIndex={0}
+      anchor={0.5} 
+      width={pieceWidth}
+      height={pieceHeight}
+      interactive={true}
+      pointerdown={() => handlePieceClick(index)}
+    />
   );
 };
 

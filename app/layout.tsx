@@ -30,13 +30,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <div className="w-full p-4 flex border-b">
+        <div className="w-full fixed h-12 flex items-center border-b">
           <Link href='/'>
             Home
           </Link>
         </div>
-        {children}
-      </body>
+        <div className="pt-12">
+
+          {children}
+        </div>
+        </body>
     </html>
   );
 }

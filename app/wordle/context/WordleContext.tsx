@@ -1,7 +1,7 @@
 'use client';
 import { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import _ from 'lodash';
-import { dictionary } from '../data';
+import { dictionary, guessesAllowed } from '../data';
 import { GameState } from '../types';
 
 interface WordleContextType {
@@ -62,9 +62,9 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [guessWord]);
 
   const pressEnter = useCallback((): void => {
-    if (currentRow > 5) return alert('You have unfortunately exhausted all your trials. Press refresh to try again.');
+    if (currentRow > 5) return alert('You have unfortunately exhausted all your trials.');
     if (guessWord.length < 5) return;
-    if (!dictionary.includes(guessWord.toLowerCase())) return alert('Word not found');
+    if (!guessesAllowed.includes(guessWord.toLowerCase())) return alert('Word not found');
 
     if (guessWord === word) {
       alert('Congratulations, you got it!');
@@ -76,14 +76,12 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
         return newStreak;
       });
 
-      // Update high streak if needed
       setHighStreak(prevHigh => {
         const newHigh = Math.max(prevHigh, currentStreak + 1);
         localStorage.setItem('highStreak', newHigh.toString());
         return newHigh;
       });
       
-      // Reset for next word (or keep going depending on your logic)
       setWord(_.sample(dictionary)?.toUpperCase() || '');
       setCompletedRows([]);
       setCurrentRow(0);
