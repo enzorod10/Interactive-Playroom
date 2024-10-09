@@ -16,13 +16,24 @@ import useBallMovement from '../hooks/useBallMovement';
 import { useAnimatePlatforms } from '../hooks/useAnimatePlatforms';
 import { useStickGrow } from '../hooks/useStickGrow';
 
-import sound from 'pixi-sound';
+import { Howl } from 'howler';
+
 import { characterHeight, platform1Edge, platform2MinimumWidth, platformHeightRatio } from '../data';
 import { useStickHeroContext } from '../StickHeroContext';
 
-sound.add('stick_growing', '/stick_growing.mp3');
-sound.add('stick_landing', { preload: true, url: '/stick_landing.mp3', volume: 0.4});
-sound.add('bonus_landing', { preload: true, url: '/bonus_landing.mp3' });
+
+const stickGrowingSound = new Howl({
+  src: ['/stick_growing.mp3']
+});
+
+const stickLandingSound = new Howl({
+  src: ['/stick_landing.mp3'],
+  volume: 0.4, // Set volume here
+});
+
+const bonusLandingSound = new Howl({
+  src: ['/bonus_landing.mp3'],
+});
 
 const headerHeight = 48;
 
@@ -40,7 +51,7 @@ const StickHeroGame = () => {
 
   const [bonusText, setBonusText] = useState({ show: false, amount: 0 });
 
-  const { startGrowing, stopGrowing } = useStickGrow(gameState, setGameState, setStickHeight, sound);
+  const { startGrowing, stopGrowing } = useStickGrow(gameState, setGameState, setStickHeight, stickGrowingSound);
 
   const handleMouseDown = () => {
     if (gameState === 'waiting') {
@@ -67,10 +78,10 @@ const StickHeroGame = () => {
   }
 
   const stickRotation = useStickRotation(gameState === 'rotating', () => {
-    sound.play('stick_landing');
+    stickLandingSound.play();
     setTimeout(() => setStickHeight(0), 250);
-    moveBall(); // Start moving the ball
-    setGameState('moving'); // Prevent the user from growing the stick during platform movement
+    moveBall(); 
+    setGameState('moving');
   });
 
   const { landedOnPlatform, bonusPoints } = useCollisionDetection(
@@ -107,7 +118,7 @@ const StickHeroGame = () => {
     setGameState
   );
   
-  const { moveBall } = useBallMovement({canvaHeight: height! - headerHeight, landedOnPlatform, platform2, stickHeight, ballPosition, setBallPosition, score, setScore, sound,setBonusText, bonusPoints, animatePlatformsWithCharacter, setGameState});
+  const { moveBall } = useBallMovement({canvaHeight: height! - headerHeight, landedOnPlatform, platform2, stickHeight, ballPosition, setBallPosition, score, setScore, sound: bonusLandingSound, setBonusText, bonusPoints, animatePlatformsWithCharacter, setGameState});
 
   useEffect(() => {
     setBallPosition({ x: 80, y: (canvaHeight) - ((canvaHeight * platformHeightRatio) + characterHeight) })

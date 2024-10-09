@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { BonusText, GameState, Platform, Position, Score } from '../types';
 import { characterHeight, platformHeightRatio } from '../data';
+import { Howl } from 'howler';
 
 interface UseBallMovementParams {
   canvaHeight: number;
@@ -11,7 +12,7 @@ interface UseBallMovementParams {
   setBallPosition: React.Dispatch<React.SetStateAction<Position>>;
   score: Score;
   setScore: React.Dispatch<React.SetStateAction<Score>>;
-  sound: { play: (sound: string) => void };
+  sound: Howl;
   setBonusText: React.Dispatch<React.SetStateAction<BonusText>>;
   bonusPoints: boolean;
   animatePlatformsWithCharacter: () => void;
@@ -90,7 +91,7 @@ export default function useBallMovement({
           total = score.total++
            if (bonusPoints) {
             bonusStreak = score.bonusStreak++
-            sound.play('bonus_landing');
+            sound.play();
             setBonusText({ show: true, amount: bonusStreak });
             setTimeout(() => setBonusText({ show: false, amount: bonusStreak }), 600);
           }
