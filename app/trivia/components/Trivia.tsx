@@ -1,60 +1,66 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { categories as categoriesListed } from "../data";
 import QuizSection from './QuizSection';
 import { Category } from '../types';
 
 export default function Trivia() {
-
-    const [selectedCategory, setSelectedCategory] = useState<Category | undefined>(undefined)
-
+    const [selectedCategory, setSelectedCategory] = useState<Category | undefined>(undefined);
     const [questions, setQuestions] = useState([]);
     const [quizStarted, setQuizStarted] = useState(false);
-
-    const grabCategories = () => {
+    const [categories, setCategories] = useState<Category[]>([]);
+  
+    useEffect(() => {
+      const grabCategories = () => {
         return categoriesListed.map((cat) => {
-            const lastQuizData = localStorage.getItem(`quiz_${cat.id}`);
-            if (lastQuizData) {
-                const { date, score } = JSON.parse(lastQuizData);
-                const today = new Date().toLocaleDateString();
-                if (date === today) {
-                    return {...cat, score }
-                } else {
-                    return {...cat, score: undefined }
-                }
+          const lastQuizData = localStorage.getItem(`quiz_${cat.id}`);
+          if (lastQuizData) {
+            const { date, score } = JSON.parse(lastQuizData);
+            const today = new Date().toLocaleDateString();
+            if (date === today) {
+              return { ...cat, score };
             } else {
-                return {...cat, score: undefined }
+              return { ...cat, score: undefined };
             }
-        })
-    }
-
-    const [categories, setCategories] = useState<Category[]>(grabCategories);
-
+          } else {
+            return { ...cat, score: undefined };
+          }
+        });
+      };
+  
+      setCategories(grabCategories());
+    }, []);
+  
     const buildApiUrl = () => {
-        let url = `https://opentdb.com/api.php?amount=10`;
-        if (selectedCategory && selectedCategory.id !== 8) {
-            url += `&category=${selectedCategory.id}`;
-        }
-        return url;
+      let url = `https://opentdb.com/api.php?amount=10`;
+      if (selectedCategory && selectedCategory.id !== 8) {
+        url += `&category=${selectedCategory.id}`;
+      }
+      return url;
     };
-
+  
     const handleStartClick = async () => {
-        const apiUrl = buildApiUrl();
-        const response = await fetch(apiUrl);
-        const data = await response.json();
-        setQuestions(data.results);
-        setQuizStarted(true);
+      const apiUrl = buildApiUrl();
+      const response = await fetch(apiUrl);
+      const data = await response.json();
+      setQuestions(data.results);
+      setQuizStarted(true);
     };
-
+  
     const handleQuizComplete = (id: number, score: number) => {
-        const today = new Date().toLocaleDateString();
-        localStorage.setItem(`quiz_${id}`, JSON.stringify({ date: today, score }));
-        setCategories(grabCategories);
-        setSelectedCategory(undefined);
-        setQuizStarted(false);
+      const today = new Date().toLocaleDateString();
+      localStorage.setItem(`quiz_${id}`, JSON.stringify({ date: today, score }));
+      setCategories((prevCategories) => {
+        const updatedCategories = [...prevCategories];
+        const index = updatedCategories.findIndex(cat => cat.id === id);
+        if (index !== -1) {
+          updatedCategories[index].score = score; // Update the score in state
+        }
+        return updatedCategories;
+      });
+      setSelectedCategory(undefined);
+      setQuizStarted(false);
     };
-
-    console.log(categories)
 
     return (
         <div className="h-[calc(100dvh-48px)] w-full overflow-hidden">
