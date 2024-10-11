@@ -15,6 +15,9 @@ export default function Home() {
       <Link href='puzzle' className="w-32 h-32 border-4 rounded-md flex justify-center items-center">
         Puzzle
       </Link>
+      <Link href='hangman' className="w-32 h-32 border-4 rounded-md flex justify-center items-center">
+        Hangman
+      </Link>
     </div>
   );
 }
