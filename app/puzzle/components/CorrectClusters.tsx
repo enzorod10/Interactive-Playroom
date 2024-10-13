@@ -40,7 +40,7 @@ const CorrectClusters = ({ pieces, pieceWidth, pieceHeight }: { pieces: Piece[],
 
     const drawClusterBorders = (g: PIXI.Graphics, clusters: Piece[][]) => {
         g.clear();
-        g.lineStyle(2, 0xACFFAC, 1); // Green border
+        g.lineStyle(0, 0xACFFAC, 1); // Green border
         g.zIndex = 10;
     
         clusters.forEach(cluster => {
