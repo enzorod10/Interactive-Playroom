@@ -134,7 +134,7 @@ const Puzzle = ({ rowsAndCols }: { rowsAndCols: number }) => {
             </div>
             <Stage className="border p-4 bg-[#cbcaca] rounded-md" width={canvaDimensions.width} height={canvaDimensions.height}>
                 <Container sortableChildren>
-                    {/* {!showCorrectImage && <CorrectClusters  pieces={pieces} pieceWidth={pieceDimensions.width} pieceHeight={pieceDimensions.height}/>} */}
+                    {!showCorrectImage && <CorrectClusters  pieces={pieces} pieceWidth={pieceDimensions.width} pieceHeight={pieceDimensions.height}/>}
                     {pieces.length === 0 ? 
                     <LoadingSprite width={canvaDimensions.width} height={canvaDimensions.height}/> :
                     pieces.map((piece, index) => (
