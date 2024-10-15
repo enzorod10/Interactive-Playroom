@@ -33,7 +33,6 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [highStreak, setHighStreak] = useState<number>(0);
 
-  // Load streaks from localStorage after the component mounts
   useEffect(() => {
     const savedCurrentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
     const savedHighStreak = parseInt(localStorage.getItem('highStreak') || '0');
