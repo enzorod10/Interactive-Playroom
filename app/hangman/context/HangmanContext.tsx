@@ -1,52 +1,67 @@
 'use client';
-import { createContext, useContext, useState } from 'react';
-import _ from 'lodash';
+import React, { createContext, useContext, useState } from 'react';
 
 interface HangmanContextProps {
-    word: string;
+    answer: string;
     lettersUsed: Set<string>;
     currentStreak: number;
     highStreak: number;
+    gamestate: string;
     guessLetter: (char: string) => void;
+    setGamestate: React.Dispatch<React.SetStateAction<string>>;
     resetGame: () => void;
 }
 
 export const HangmanContext = createContext<HangmanContextProps | undefined>(undefined);
 
 export const HangmanProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [word, setWord] = useState('words this is the word'.toLocaleUpperCase());
+    const [answer, setAnswer] = useState('Leonardo Di Caprio'.toLocaleUpperCase());
     const [lettersUsed, setLettersUsed] = useState<Set<string>>(new Set());
     const [currentStreak, setCurrentStreak] = useState(0);
     const [highStreak, setHighStreak] = useState(0);
+    const [gamestate, setGamestate] = useState('playing');
 
     const guessLetter = (char: string) => {
-        setLettersUsed(prev => new Set(prev).add(char));
+        if (lettersUsed.has(char)) return; 
+    
+        setLettersUsed(prev => {
+            const newLettersUsed = new Set(prev).add(char);
+    
+            checkGameOver(newLettersUsed);
+            return newLettersUsed;
+        });
     };
 
     const resetGame = () => {
-        setWord('newWord');
+        setAnswer('newWord');
+        setGamestate('playing');
         setLettersUsed(new Set());
     };
 
-    const checkGameOver = () => {
-        if (word.split('').every(letter => lettersUsed.has(letter))) {
-            // Win logic
+    const checkGameOver = (updatedLettersUsed: Set<string>) => {
+        const wrongGuesses = Array.from(updatedLettersUsed).filter(letter => !answer.includes(letter)).length;
+    
+        // Win condition: all letters of the answer have been guessed
+        if (answer.split('').every(letter => updatedLettersUsed.has(letter))) {
             setCurrentStreak(currentStreak + 1);
             setHighStreak(Math.max(currentStreak + 1, highStreak));
-            resetGame();
-        } else if (lettersUsed.size >= 6) { // Assume 6 wrong guesses allowed
-            // Lose logic
+            setGamestate('won');
+        } 
+        // Lose condition: 7 wrong guesses
+        else if (wrongGuesses >= 7) {
             setCurrentStreak(0);
-            resetGame();
+            setGamestate('lost');
         }
     };
 
     return (
         <HangmanContext.Provider value={{
-        word,
+        answer,
         lettersUsed,
         currentStreak,
         highStreak,
+        gamestate,
+        setGamestate,
         guessLetter,
         resetGame
         }}>
