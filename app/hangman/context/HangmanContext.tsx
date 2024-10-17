@@ -1,5 +1,8 @@
 'use client';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import _ from 'lodash';
+import fetchRandomMovie from '../Api/fetchRandomMovie';
+import { dictionary } from '@/app/wordle/data';
 
 interface HangmanContextProps {
     answer: string;
@@ -15,11 +18,20 @@ interface HangmanContextProps {
 export const HangmanContext = createContext<HangmanContextProps | undefined>(undefined);
 
 export const HangmanProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [answer, setAnswer] = useState('Leonardo Di Caprio'.toLocaleUpperCase());
+    const [answer, setAnswer] = useState<string>('');
     const [lettersUsed, setLettersUsed] = useState<Set<string>>(new Set());
     const [currentStreak, setCurrentStreak] = useState(0);
     const [highStreak, setHighStreak] = useState(0);
     const [gamestate, setGamestate] = useState('playing');
+
+    const fetchRandomThing = async () => {
+        const word = await fetchRandomMovie()
+        setAnswer(typeof word === 'string' ? word.toLocaleUpperCase() :  _.sample(dictionary)!.toUpperCase())
+    }
+
+    useEffect(() => {
+        fetchRandomThing()
+    }, [])
 
     const guessLetter = (char: string) => {
         if (lettersUsed.has(char)) return; 
@@ -33,16 +45,17 @@ export const HangmanProvider: React.FC<{ children: React.ReactNode }> = ({ child
     };
 
     const resetGame = () => {
-        setAnswer('newWord');
+        fetchRandomThing()
         setGamestate('playing');
         setLettersUsed(new Set());
     };
 
     const checkGameOver = (updatedLettersUsed: Set<string>) => {
         const wrongGuesses = Array.from(updatedLettersUsed).filter(letter => !answer.includes(letter)).length;
+        console.log(answer.split(''))
     
         // Win condition: all letters of the answer have been guessed
-        if (answer.split('').every(letter => updatedLettersUsed.has(letter))) {
+        if (answer.split('').every(letter => letter === ' ' || updatedLettersUsed.has(letter))) {
             setCurrentStreak(currentStreak + 1);
             setHighStreak(Math.max(currentStreak + 1, highStreak));
             setGamestate('won');

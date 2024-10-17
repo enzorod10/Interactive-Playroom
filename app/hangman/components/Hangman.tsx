@@ -9,11 +9,14 @@ import {
   DialogContent,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { useRouter } from 'next/navigation';
 
 export default function Hangman() {
-    const { answer, lettersUsed, gamestate, resetGame, setGamestate } = useHangmanContext();
+    const { answer, lettersUsed, gamestate, resetGame } = useHangmanContext();
     const wrongGuesses = Array.from(lettersUsed).filter(letter => !answer.includes(letter)).length;
     const stageWrapper= useRef<HTMLDivElement>(null);
+    const router = useRouter();
 
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 
@@ -61,12 +64,17 @@ export default function Hangman() {
           <DialogContent>
           <div className="text-center">
               <DialogTitle>
-                  <h2 className="mb-1">{gamestate === 'won' ? 'Congratulations!' : 'Sorry'}!</h2>
+                  <h2 className="mb-2">You {gamestate === 'won' ? 'won!' : 'lost!'}</h2>
               </DialogTitle>
-                  <p>You {gamestate === 'won' ? 'won!' : 'lost!'}</p>
-                  <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={resetGame}>
-                    Generate new game
-                  </button>
+                  <p>The correct answer was {answer} </p>
+                  <div className="flex justify-evenly mt-2">
+                    <Button variant={'destructive'} onClick={() => router.push('/')}>
+                      Go Home
+                    </Button>
+                    <Button onClick={resetGame}>
+                      New Round
+                    </Button>
+                  </div>
               </div>
           </DialogContent>
         </Dialog>
