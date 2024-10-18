@@ -1,6 +1,10 @@
 // Function to normalize strings by removing accents
-const removeAccents = (str: string) => {
-    return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+const removeAccentsAndSpecialChars = (str: string) => {
+    // Remove accents first
+    const normalizedStr = str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    
+    // Remove any special characters except spaces and letters
+    return normalizedStr.replace(/[^a-zA-Z\s]/g, '');
 };
 
 const fetchRandomCountryAndCapital = async () => {
@@ -22,10 +26,10 @@ const fetchRandomCountryAndCapital = async () => {
         const answer = isCapital ? capital : country;
 
         return {
-            answer: removeAccents(answer.toUpperCase()),
+            answer: removeAccentsAndSpecialChars(answer.toUpperCase()),
             theme: isCapital ? 'Capital City' : 'Country',
             image: randomCountry.flags?.svg || null, 
-            height: '90px',
+            height: randomCountry.flags?.svg && '100px',
         };
     } catch (error) {
         console.error('Error fetching country and capital:', error);

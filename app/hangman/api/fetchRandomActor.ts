@@ -8,7 +8,7 @@ const fetchRandomActor = async () => {
         },
     };
 
-    const page = Math.floor(Math.random() * 200) + 1;
+    const page = Math.floor(Math.random() * 150) + 1;
 
     try {
         const response = await fetch(

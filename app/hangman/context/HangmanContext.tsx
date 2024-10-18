@@ -3,20 +3,20 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import _ from 'lodash';
 
 import fetchRandomMovie from '../api/fetchRandomMovie';
+import fetchRandomShow from '../api/fetchRandomShow';
 import fetchRandomActor from '../api/fetchRandomActor';
 import fetchRandomAthlete from '../api/fetchRandomAthlete';
-import fetchRandomWord from '../api/fetchRandomWord';
+// import fetchRandomWord from '../api/fetchRandomWord';
 import fetchRandomCountryAndCapital from '../api/fetchRandomCountryAndCapital';
-import fetchRandomAnimal from '../api/fetchRandomAnimal';
 
 import { dictionary } from '@/app/wordle/data';
 
 const fetchFunctions = [
-    // fetchRandomMovie, 
+    fetchRandomShow,
+    fetchRandomMovie, 
     fetchRandomCountryAndCapital,
-    // fetchRandomAnimal,
-    // fetchRandomActor, 
-    // fetchRandomAthlete, 
+    fetchRandomActor, 
+    fetchRandomAthlete, 
     // fetchRandomWord
 ];
 
@@ -48,7 +48,7 @@ export const HangmanProvider: React.FC<{ children: React.ReactNode }> = ({ child
             setAnswer({ answer: res.answer.toLocaleUpperCase(), theme: res.theme, image: res.image, height: res.height });
         } else {
             console.warn('No valid answer found. Defaulting to a random word.');
-            setAnswer({ answer: _.sample(dictionary)!.toUpperCase(), theme: 'word', image: null, height: null });
+            setAnswer({ answer: _.sample(dictionary)!.toUpperCase(), theme: 'Word', image: null, height: null });
         }
     };
 
