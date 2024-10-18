@@ -12,11 +12,11 @@ import fetchRandomCountryAndCapital from '../api/fetchRandomCountryAndCapital';
 import { dictionary } from '@/app/wordle/data';
 
 const fetchFunctions = [
-    // fetchRandomShow,
-    // fetchRandomMovie, 
-    // fetchRandomCountryAndCapital,
+    fetchRandomShow,
+    fetchRandomMovie, 
+    fetchRandomCountryAndCapital,
     fetchRandomActor, 
-    // fetchRandomAthlete, 
+    fetchRandomAthlete, 
     // fetchRandomWord
 ];
 
