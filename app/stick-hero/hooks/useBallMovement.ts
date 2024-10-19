@@ -87,9 +87,10 @@ export default function useBallMovement({
         let bonusStreak: number = 0;
 
         if (landedOnPlatform) {
-          total = score.total++
-           if (bonusPoints) {
-            bonusStreak = score.bonusStreak++
+          total = score.total + 1; // Increment immutably
+        
+          if (bonusPoints) {
+            bonusStreak = score.bonusStreak + 1; // Increment immutably
             sound.play();
             setBonusText({ show: true, amount: bonusStreak });
             setTimeout(() => setBonusText({ show: false, amount: bonusStreak }), 600);
@@ -97,7 +98,6 @@ export default function useBallMovement({
           setScore({ total: total + bonusStreak, bonusStreak });
           setTimeout(() => animatePlatformsWithCharacter(), 150);
         } else {
-          // Reset the score and make the ball fall
           setScore({ total: 0, bonusStreak: 0 });
           fallBall();
         }
