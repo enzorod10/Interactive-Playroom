@@ -41,7 +41,7 @@ const StickHeroGame = () => {
   const {width, height} = useWindowSize();
   const canvaHeight = height! - headerHeight;
 
-  const { gameState, setGameState, score, setScore } = useStickHeroContext();
+  const { gameState, setGameState, score } = useStickHeroContext();
 
   const [stickHeight, setStickHeight] = useState(0);
   const [ballPosition, setBallPosition] = useState({ x: 80, y: (canvaHeight) - ((canvaHeight * platformHeightRatio) + characterHeight) });
@@ -118,7 +118,7 @@ const StickHeroGame = () => {
     setGameState
   );
   
-  const { moveBall } = useBallMovement({canvaHeight: height! - headerHeight, landedOnPlatform, platform2, stickHeight, ballPosition, setBallPosition, score, setScore, sound: bonusLandingSound, setBonusText, bonusPoints, animatePlatformsWithCharacter, setGameState});
+  const { moveBall } = useBallMovement({canvaHeight: height! - headerHeight, landedOnPlatform, platform2, stickHeight, ballPosition, setBallPosition, sound: bonusLandingSound, setBonusText, bonusPoints, animatePlatformsWithCharacter, setGameState});
 
   useEffect(() => {
     setBallPosition({ x: 80, y: (canvaHeight) - ((canvaHeight * platformHeightRatio) + characterHeight) })

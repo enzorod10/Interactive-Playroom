@@ -13,8 +13,9 @@ interface WordleContextType {
   word: string;
   guessWord: string;
   backspace: () => void;
-  gameState: GameState;
-  setGameState: React.Dispatch<React.SetStateAction<GameState>>;
+  gamestate: GameState;
+  setGamestate: React.Dispatch<React.SetStateAction<GameState>>;
+  resetGame: () => void;
   currentStreak: number;
   highStreak: number;
 }
@@ -27,15 +28,15 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
   const [guessWord, setGuessWord] = useState<string>('');
   const [currentRow, setCurrentRow] = useState<number>(0);
   const [letterStatus, setLetterStatus] = useState<{ [key: string]: string }>({});
-  const [gameState, setGameState] = useState<GameState>('playing');
+  const [gamestate, setGamestate] = useState<GameState>('playing');
   
   // Streak states
   const [currentStreak, setCurrentStreak] = useState<number>(0);
   const [highStreak, setHighStreak] = useState<number>(0);
 
   useEffect(() => {
-    const savedCurrentStreak = parseInt(localStorage.getItem('currentStreak') || '0');
-    const savedHighStreak = parseInt(localStorage.getItem('highStreak') || '0');
+    const savedCurrentStreak = parseInt(localStorage.getItem('wordleCurrentStreak') || '0');
+    const savedHighStreak = parseInt(localStorage.getItem('wordleHighStreak') || '0');
     setCurrentStreak(savedCurrentStreak);
     setHighStreak(savedHighStreak);
   }, []);
@@ -64,44 +65,45 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
     setGuessWord(guessWord.concat(char));
   }, [guessWord]);
 
-  const pressEnter = useCallback((): void => {
-    if (currentRow > 5) return alert('You have unfortunately exhausted all your trials.');
-    if (guessWord.length < 5) return;
-    if (!guessesAllowed.includes(guessWord.toLowerCase())) return alert('Word not found');
-
-    if (guessWord === word) {
-      alert('Congratulations, you got it!');
-
-      // Increment current streak
+  const handleEndGame = useCallback((result: string) => {
+    if (result === 'won'){
       setCurrentStreak(prevStreak => {
         const newStreak = prevStreak + 1;
-        localStorage.setItem('currentStreak', newStreak.toString());
+        localStorage.setItem('wordleCurrentStreak', newStreak.toString());
         return newStreak;
       });
 
       setHighStreak(prevHigh => {
         const newHigh = Math.max(prevHigh, currentStreak + 1);
-        localStorage.setItem('highStreak', newHigh.toString());
+        localStorage.setItem('wordleHighStreak', newHigh.toString());
         return newHigh;
       });
-      
-      setWord(_.sample(dictionary)?.toUpperCase() || '');
-      setCompletedRows([]);
-      setCurrentRow(0);
-      setGuessWord('');
-    } else if (currentRow === 5) {
-      alert('Game over!');
 
-      // Reset current streak
+      setGamestate('won')
+
+    } else {
+      setGamestate('lost')
       setCurrentStreak(0);
-      localStorage.setItem('currentStreak', '0');
+      localStorage.setItem('wordleCurrentStreak', '0');
+    }
+  }, [currentStreak])
+
+  const pressEnter = useCallback((): void => {
+    if (guessWord.length < 5) return;
+    if (!guessesAllowed.includes(guessWord.toLowerCase())) return alert('Word not found');
+
+    if (guessWord === word) {
+      return handleEndGame('won')
+    } else if (currentRow === 5) {
+      return handleEndGame('lost')
     }
 
     updateLetterStatus();
     setCurrentRow(currentRow + 1);
     setCompletedRows((prevRows) => [...prevRows, currentRow]);
+
     setGuessWord('');
-  }, [currentRow, guessWord, word, currentStreak, updateLetterStatus]);
+  }, [guessWord, word, currentRow, updateLetterStatus, handleEndGame]);
 
   const backspace = useCallback((): void => {
     setGuessWord(guessWord.slice(0, guessWord.length - 1));
@@ -127,6 +129,15 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
     };
   }, [guessWord, currentRow, word, pressEnter, backspace, guessTheWord]);
 
+  const resetGame = () => {
+    setGamestate('playing')
+    setLetterStatus({});
+    setCompletedRows([]);
+    setCurrentRow(0);
+    setGuessWord('');
+    setTimeout(() => setWord(_.sample(dictionary)?.toUpperCase() || ''), 500);
+  }
+
   return (
     <WordleContext.Provider value={{
       guessTheWord,
@@ -137,9 +148,10 @@ export const WordleWrapper: React.FC<{ children: React.ReactNode }> = ({ childre
       word,
       guessWord,
       backspace,
-      gameState,
-      setGameState,
+      gamestate,
+      setGamestate,
       currentStreak,
+      resetGame,
       highStreak
     }}>
       {children}

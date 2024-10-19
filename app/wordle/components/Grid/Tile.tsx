@@ -36,6 +36,12 @@ export default function Tile({ id , rowId }: { id: number, rowId: number }) {
        
     },[guessWord, completedRows, currentRow, rowId, completed, id, changeColors])
 
+    useEffect(() => {
+        setLetter('');
+        setColor({ background: 'white', font: 'black' });
+        setCompleted(true);
+      }, [word]);
+
     return (
         <div style={style} className={`flex justify-center my-[2px] m-[2px] items-center w-[52px] h-[52px] ${completed ? 'border-slate-300 border-2' : ''} ${rowId === currentRow ? 'border-slate-500 border-2' : ''}`}>
             <p className="flex self-center font-bold text-[32px]" >{letter}</p>

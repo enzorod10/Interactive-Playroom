@@ -1,7 +1,8 @@
 import { useCallback } from 'react';
-import { BonusText, GameState, Platform, Position, Score } from '../types';
+import { BonusText, GameState, Platform, Position } from '../types';
 import { characterHeight, platformHeightRatio } from '../data';
 import { Howl } from 'howler';
+import { useStickHeroContext } from '../StickHeroContext';
 
 interface UseBallMovementParams {
   canvaHeight: number;
@@ -10,8 +11,6 @@ interface UseBallMovementParams {
   stickHeight: number;
   ballPosition: Position;
   setBallPosition: React.Dispatch<React.SetStateAction<Position>>;
-  score: Score;
-  setScore: React.Dispatch<React.SetStateAction<Score>>;
   sound: Howl;
   setBonusText: React.Dispatch<React.SetStateAction<BonusText>>;
   bonusPoints: boolean;
@@ -26,14 +25,14 @@ export default function useBallMovement({
   stickHeight,
   ballPosition,
   setBallPosition,
-  score,
-  setScore,
   sound,
   setBonusText,
   bonusPoints,
   animatePlatformsWithCharacter,
   setGameState,
 }: UseBallMovementParams) {
+
+  const {score, setScore} = useStickHeroContext();
 
   // Animate the ball falling
   const fallBall = useCallback(() => {

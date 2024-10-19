@@ -27,7 +27,7 @@ const fetchRandomCountryAndCapital = async () => {
 
         return {
             answer: removeAccentsAndSpecialChars(answer.toUpperCase()),
-            theme: isCapital ? 'Capital City' : 'Country',
+            theme: isCapital ? 'Capital' : 'Country',
             image: randomCountry.flags?.svg || null, 
             height: randomCountry.flags?.svg && '100px',
         };
