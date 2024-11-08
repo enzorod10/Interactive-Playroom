@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import Link from "next/link";
-
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,10 +32,12 @@ export default function RootLayout({
       >
         <div className="w-full fixed h-12 flex items-center border-b">
           <Link href='/'>
-            Home
+          <Avatar>
+            <AvatarImage src="website_icon.png" />
+          </Avatar>
           </Link>
         </div>
-        <div className="pt-12">
+        <div className="pt-12 animated-gradient min-h-screen">
 
           {children}
         </div>
