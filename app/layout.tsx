@@ -3,6 +3,8 @@ import localFont from "next/font/local";
 import "./globals.css";
 import Link from "next/link";
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { ThemeProvider } from "@/components/ui/theme-provider"
+import { ModeToggle } from '@/components/ui/mode-toggle'
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,19 +30,26 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-secondary/30 dark:bg-secondary/80`}
       >
-        <div className="w-full fixed h-12 flex items-center border-b">
-          <Link href='/'>
-          <Avatar>
-            <AvatarImage src="website_icon.png" />
-          </Avatar>
-          </Link>
-        </div>
-        <div className="pt-12 animated-gradient min-h-screen">
-
-          {children}
-        </div>
+         <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="w-full fixed justify-between h-16 flex items-center px-4 ">
+              <Link href='/'>
+                <Avatar className="w-14 h-14">
+                  <AvatarImage src="website_icon.png" />
+                </Avatar>
+              </Link>
+              <ModeToggle />
+            </div>
+            <div className="pt-16 min-h-screen">
+              {children}
+            </div>
+        </ThemeProvider>
         </body>
     </html>
   );

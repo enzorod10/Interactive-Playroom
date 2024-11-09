@@ -15,8 +15,8 @@ const Wordle = () => {
     const router = useRouter();
 
     return (
-        <div className="flex relative flex-col h-[calc(100dvh-48px)] sm:gap-10 sm:mt-10 lg:h-fit lg:gap-10 lg:my-10" >
-            <div className="flex text-sm flex-col absolute z-50 -top-11 right-12">
+        <div className="flex relative flex-col h-[calc(100dvh-64px)] sm:gap-10 sm:mt-10 lg:h-fit lg:gap-10 lg:my-10" >
+            <div className="flex flex-col absolute z-50 -top-[54px] sm:-top-[96px] right-16 sm:half-minus-12 sm:half-minus-12 min-w-max">
                 <div>
                 Current Streak: {currentStreak}
                 </div>

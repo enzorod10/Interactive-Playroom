@@ -89,7 +89,7 @@ export default function QuizSection({ selectedCategory, questions, onComplete }:
                                     ? answer === correct_answer
                                         ? 'bg-green-500 text-white'
                                         : 'bg-red-500 text-white'
-                                    : 'bg-white hover:bg-gray-200'
+                                    : 'bg-primary/50'
                             }`}
                             dangerouslySetInnerHTML={{ __html: answer }}
                         />

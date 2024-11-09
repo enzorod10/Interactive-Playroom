@@ -63,7 +63,7 @@ export default function Trivia() {
     };
 
     return (
-        <div className="h-[calc(100dvh-48px)] w-full overflow-hidden">
+        <div className="h-[calc(100dvh-64px)] w-full overflow-hidden">
             {!quizStarted ? (
                 <div className='flex flex-col h-full p-4 sm:mx-auto max-w-2xl justify-evenly gap-4'>
                     <div className='flex flex-col gap-4 overflow-hidden'>
@@ -72,16 +72,16 @@ export default function Trivia() {
                             {categories.map((cat) => (
                                 <div
                                     key={cat.id}
-                                    className={`flex flex-col relative ${cat.score !== undefined && cat.score !== null ? 'bg-zinc-500 text-white' : 'cursor-pointer'} h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-lg shadow-md border transition ${
+                                    className={`flex flex-col relative h-20 w-20 sm:h-24 sm:w-24 items-center justify-center rounded-lg shadow-md border transition ${
                                         selectedCategory?.id === cat.id
                                             ? 'bg-blue-500 text-white'
-                                            : `bg-white ${cat.score ? '' : 'hover:bg-gray-200'}`
+                                            : `${cat.score !== undefined && cat.score !== null ? 'bg-primary-foreground/20' : 'bg-primary/70 hover:bg-primary cursor-pointer'}`
                                     }`}
                                     onClick={cat.score !== undefined && cat.score !== null  ? undefined : () => setSelectedCategory(cat)}>
                                     <cat.img className="h-8 w-8" />
                                     <div className="text-sm">{cat.name}</div>
                                     {cat.score !== undefined && cat.score !== null  && 
-                                    <div className={`absolute diagonal-fractions -top-2 text-lg -right-2 bg-white rounded-full px-1 ${cat.score < 6 ? 'text-red-500' : 'text-green-500' }`}>
+                                    <div className={`absolute diagonal-fractions leading-none top-0 text-xl text-end w-full px-1 ${cat.score < 6 ? 'text-red-800' : 'text-green-800' }`}>
                                         {cat.score + '/10'}
                                     </div>}
                                 </div>

@@ -16,10 +16,11 @@ import {
     DialogTitle,
   } from "@/components/ui/dialog"
 import Timer from "./Timer";
+import { Button } from "@/components/ui/button";
 
 const Puzzle = ({ rowsAndCols }: { rowsAndCols: number }) => {
     const { width, height } = useWindowSize();
-    const canvaDimensions = { width: width! > 600 ? 600 : width! - 32, height: height! > 600 ? 600 : height! - 32 }
+    const canvaDimensions = { width: width! > 600 ? 600 : width! - 32, height: height! > 600 ? 500 : height! - 32 }
     const [pieceDimensions, setPieceDimensions] = useState({ width: 0, height: 0 })
 
     const [showCorrectImage, setShowCorrectImage] = useState(false);
@@ -38,9 +39,9 @@ const Puzzle = ({ rowsAndCols }: { rowsAndCols: number }) => {
         fetchRandomImage();
     }, []);
 
-
     useEffect(() => {
-        if (pieces.length > 0 && !isPuzzleComplete) {
+        if (isPuzzleComplete) return
+        if (pieces.length > 0) {
             setIsTimerRunning(true);
         }
     }, [isPuzzleComplete, pieces]);
@@ -126,13 +127,13 @@ const Puzzle = ({ rowsAndCols }: { rowsAndCols: number }) => {
     };
 
     return (
-        <div className="h-[calc(100dvh-48px)] relative flex flex-col justify-center items-center gap-4">
-            <div className="flex absolute sm:relative sm:top-0 sm:right-0 -top-[42px] right-4 items-center justify-center gap-4">
-            <Timer elapsedTime={elapsedTime} />
+        <div className="h-[calc(100dvh-64px)] relative flex flex-col justify-center items-center gap-4">
+            <div className="flex absolute sm:relative sm:top-0 sm:right-0 -top-[48px] right-16 items-center justify-center gap-4">
+                <Timer elapsedTime={elapsedTime} />
                 <div className="py-1 px-2 border rounded-sm" id="autosolveclickbutton" onClick={() => solvePuzzleStepByStep(pieces, setPieces, setIsPuzzleComplete, setIsTimerRunning)}>Solve</div>
                 {!showCorrectImage ? <IoMdEye className="w-6 h-6" onClick={() => setShowCorrectImage(prev => !prev)}/> : <IoMdEyeOff className="w-6 h-6" onClick={() => setShowCorrectImage(prev => !prev)}/>}
             </div>
-            <Stage className="border p-4 bg-[#cbcaca] rounded-md" width={canvaDimensions.width} height={canvaDimensions.height}>
+            <Stage className="p-2 border-2 border-primary/60 rounded-sm" width={canvaDimensions.width} height={canvaDimensions.height}>
                 <Container sortableChildren>
                     {!showCorrectImage && <CorrectClusters  pieces={pieces} pieceWidth={pieceDimensions.width} pieceHeight={pieceDimensions.height}/>}
                     {pieces.length === 0 ? 
@@ -157,10 +158,10 @@ const Puzzle = ({ rowsAndCols }: { rowsAndCols: number }) => {
                         <DialogTitle>
                             <h2 className="mb-1">Congratulations!</h2>
                         </DialogTitle>
-                            <p>You completed the puzzle in {Math.floor(elapsedTime / 60)}:{elapsedTime % 60}</p>
-                            <button className="mt-4 px-4 py-2 bg-blue-500 text-white rounded" onClick={startNewPuzzle}>
+                            <p>You completed the puzzle in {Math.floor(elapsedTime / 60)}:{elapsedTime % 60 < 10 ? '0' + elapsedTime % 60 : elapsedTime % 60}</p>
+                            <Button type="button" className="mt-2" onClick={startNewPuzzle}>
                                 Start New Puzzle
-                            </button>
+                            </Button>
                         </div>
                     </DialogContent>
                 </Dialog>

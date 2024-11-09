@@ -41,14 +41,11 @@ export default function Hangman() {
     }, []);
 
     return (
-      <div className='h-[calc(100dvh-48px)] max-w-screen-lg	mx-auto overflow-hidden'>
-          <div className="flex border bg-black-500 absolute -top-10 -right-10">
-            Hey
-          </div>
-        <div className="h-4/6 bg-[#40ADC9] rounded-md">
+      <div className='h-[calc(100dvh-64px)] max-w-screen-lg	mx-auto overflow-hidden'>
+        <div className="h-4/6 bg-[#8ecae6] sm:rounded-xl">
           <div className='h-4/6 w-full' ref={stageWrapper}>
             {dimensions.width && dimensions.height && (
-              <Stage width={dimensions.width} height={dimensions.height} style={{ touchAction: 'none' }} options={{ backgroundColor: 0x40ADC9 }}>
+              <Stage width={dimensions.width} height={dimensions.height} style={{ touchAction: 'none' }} options={{ backgroundColor: 0x8ecae6 }}>
                 <Text
                   text={`Current Streak: ${currentStreak} \nHighest Streak: ${highStreak}`}
                   style={new PIXI.TextStyle({ fill: 'white', fontFamily: 'Comic Sans MS', letterSpacing: 1, leading: 0, fontSize: dimensions.width > 500 ? 17 : 14 })}
@@ -69,7 +66,7 @@ export default function Hangman() {
             {answer.answer.split(' ').map((answerSegment, answerIndex) => (
               <div key={answerIndex} className="flex mx-2 whitespace-nowrap overflow-auto">
                 {answerSegment.split('').map((char, charIndex) => (
-                  <span key={charIndex} className={`mx-1 font-semibold ${char === ' ' ? '' : 'border-b'} text-lg w-8 h-8 flex justify-center items-center`}>
+                  <span key={charIndex} className={`mx-1 font-semibold ${char === ' ' ? '' : 'border-b border-primary-foreground dark:border-secondary'} text-lg w-8 h-8 flex justify-center items-center dark:text-secondary`}>
                     {lettersUsed.has(char) && char}
                   </span>
                 ))}

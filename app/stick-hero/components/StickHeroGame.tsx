@@ -35,7 +35,7 @@ const bonusLandingSound = new Howl({
   src: ['/bonus_landing.mp3'],
 });
 
-const headerHeight = 48;
+const headerHeight = 64;
 
 const StickHeroGame = () => {
   const {width, height} = useWindowSize();
@@ -130,10 +130,10 @@ const StickHeroGame = () => {
       onMouseUp={handleMouseUp}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
-      className='w-full h-full flex justify-center bg-[#40ADC9] touch-none select-none'
+      className='w-full h-full flex justify-center bg-[#8ecae6] touch-none select-none'
       style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }} // Disable default behaviors
     >
-      <Stage style={{touchAction: 'none'}} width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x40ADC9 }}>
+      <Stage style={{touchAction: 'none'}} width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x8ecae6 }}>
         {/* Platform 1 */}
         <Platform id={0} x={platform1.x} canvaHeight={canvaHeight} width={platform1.width} bonusText={bonusText}/>
 
