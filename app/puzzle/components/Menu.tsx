@@ -12,7 +12,7 @@ export default function Menu() {
         )
     } else {
         return (
-            <div className="h-[calc(100dvh-64px)] overflow-auto max-w-screen-2xl py-4 flex flex-col items-center sm:justify-center gap-4">
+            <div className="h-[calc(100dvh-64px)] overflow-auto max-w-screen-2xl mx-auto py-4 flex flex-col items-center sm:justify-center gap-4">
                 <h2 className="text-2xl sm:text-3xl font-semibold tracking-tight">
                     How many puzzle pieces?
                 </h2>
