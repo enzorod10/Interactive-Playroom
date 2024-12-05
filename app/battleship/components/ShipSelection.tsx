@@ -1,13 +1,14 @@
 import Image from "next/image"
-import { ships } from "../data"
+import { Ship } from "../types"
 
-export default function ShipSelection() {
-    console.log(ships)
+export default function ShipSelection({ ships }: { ships: Ship[] }) {
     return (
-        <div className="flex justify-evenly mx-auto w-max-48 border border-yellow-500 h-16">
+        <div className="flex flex-wrap justify-evenly mx-auto p-4 gap-4">
             {ships.map((ship, indx) => {
                 return (
-                    <Image className="border border-blue-500" key={indx} src={`/${ship.image}`} height={24} width={24} alt='dsd'/>
+                    <div key={indx} className="flex items-center justify-center h-12 p-4 bg-zinc-700 rounded-md  ">
+                        <Image className="h-12"  src={ship.image} height={0} width={120} alt='dsd'/>
+                    </div>
                 )
             })}
         </div>
