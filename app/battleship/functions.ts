@@ -1,5 +1,5 @@
 import { tempShips } from "./data"
-import { Player, Cell, Ship } from "./types"
+import { Player, Cell as CellType, Ship } from "./types"
 
 export const createPlayer = (name: string): Player=> {
     return {
@@ -9,11 +9,11 @@ export const createPlayer = (name: string): Player=> {
     }
 }
 
-export const createBoard = (): Cell[] => {
+export const createBoard = (): CellType[] => {
     const board = []
-    for (let x=0; x<10; x++){
-        for (let y=0; y<10; y++){
-            board.push({ x, y, hit: false })
+    for (let y=0; y<10; y++){
+        for (let x=0; x<10; x++){
+            board.push({ x, y, hit: false, highlight: '' })
         }
     }
 
@@ -23,13 +23,8 @@ export const createBoard = (): Cell[] => {
 export const createShips = (): Ship[] => {
     const ships: Ship[] = [];
     tempShips.forEach((ship, indx) => {
-        const quantity =  
-            ship.name === 'Battleship' ? 1 :
-            ship.name === 'Carrier' ? 1 :
-            ship.name === 'Cruiser' ? 2 :
-            ship.name === 'Submarine' ? 3 : 4
-        for (let i=0; i<quantity; i++){
-            ships.push({...ship, id: indx + 1})
+        for (let i=0; i<ship.quantity; i++){
+            ships.push({ ...ship, id: indx + 1 })
         }
     })
 

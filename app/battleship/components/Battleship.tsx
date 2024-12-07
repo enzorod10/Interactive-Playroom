@@ -3,10 +3,12 @@ import Gameboard from "./Gameboard";
 import ShipSelection from "./ShipSelection";
 import { useBattleshipContext } from "../BattleshipContext";
 
+document.addEventListener("dragover", (event) => {
+    event.preventDefault();
+});
+
 export default function Battleship() {
     const { gameState, setGameState, beginGame, player1, player2} = useBattleshipContext();
-
-    console.log({gameState})
 
     if (gameState === 'menu'){
         return(

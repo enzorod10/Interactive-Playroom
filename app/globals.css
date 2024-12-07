@@ -72,3 +72,10 @@ body {
     right: calc(50% - 64px);
   }
 }
+
+.valid_drop_space {
+  background-color: green;
+}
+.invalid_drop_space {
+  background-color: red;
+}
