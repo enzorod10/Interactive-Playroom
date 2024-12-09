@@ -1,5 +1,6 @@
 import { tempShips } from "./data"
 import { Player, Cell as CellType, Ship } from "./types"
+import { v4 as uuidv4 } from 'uuid';
 
 export const createPlayer = (name: string): Player=> {
     return {
@@ -22,9 +23,9 @@ export const createBoard = (): CellType[] => {
 
 export const createShips = (): Ship[] => {
     const ships: Ship[] = [];
-    tempShips.forEach((ship, indx) => {
+    (tempShips as Ship[]).forEach((ship) => {
         for (let i=0; i<ship.quantity; i++){
-            ships.push({ ...ship, id: indx + 1 })
+            ships.push({ ...ship, id: uuidv4() })
         }
     })
 

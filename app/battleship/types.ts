@@ -1,4 +1,3 @@
-export type ShipName = 'Battleship' | 'Carrier' | 'Submarine' | 'Cruiser' |  'Small Ship'
 
 export interface Player{
     name: string;
@@ -15,8 +14,8 @@ export interface Cell{
 }
 
 export interface Ship{
-    name: ShipName;
-    id: number;
+    name: string;
+    id: string;
     length: number;
     hitCount: number;
     rotation: 'vertical' | 'horizontal';

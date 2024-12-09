@@ -1,4 +1,6 @@
 'use client';
+import { HTML5toTouch } from 'rdndmb-html5-to-touch'
+import { DndProvider } from 'react-dnd-multi-backend'
 import Gameboard from "./Gameboard";
 import ShipSelection from "./ShipSelection";
 import { useBattleshipContext } from "../BattleshipContext";
@@ -50,13 +52,13 @@ export default function Battleship() {
 
     if (gameState === 'singleplayer_p1_place_ships'){
         return (
-            <div className="h-[calc(100dvh-64px)] overflow-auto max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4">
-                <div>
-                    Player 1, place your ships on the board. C
+            <DndProvider options={HTML5toTouch}>
+
+                <div className="h-[calc(100dvh-64px)] overflow-auto max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4">
+                    <Gameboard player={player1!}/>
+                    <ShipSelection ships={player1!.ships}/>
                 </div>
-                <Gameboard player={player1!}/>
-                <ShipSelection ships={player1!.ships}/>
-            </div>
+            </DndProvider>
         )
     }
     if (gameState === 'multiplayer_p1_place_ships'){

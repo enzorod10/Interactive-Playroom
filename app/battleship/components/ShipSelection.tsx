@@ -1,79 +1,61 @@
 'use client';
-import Image from "next/image"
-import { Ship } from "../types"
-import React from "react";
+import Image from "next/image";
+import { Ship } from "../types";
 import { useBattleshipContext } from "../BattleshipContext";
+import { DragPreviewImage, useDrag } from 'react-dnd';
+import { useDrop } from 'react-dnd';
+import React, { useEffect, useRef } from 'react';
+import { getEmptyImage } from 'react-dnd-html5-backend';
+import { CustomDragLayer } from "../CustomDragLayer";
 
-export default function ShipSelection({ ships }: { ships: Ship[] }) {
-    const { draggedShip, setDraggedShip, setPlayer1, player1 } = useBattleshipContext();
-
-    const dragStart = (e: React.DragEvent<HTMLDivElement>, ship: Ship) => {
-        setDraggedShip({...ship, position: { x: e.pageX, y: e.pageY } })
-        const emptyImage = document.createElement('img');
-        emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==';
-        e.dataTransfer.setDragImage(emptyImage, 0, 0);
-
-        document.body.style.cursor = 'none';
-
-    }
-
-    const drag = (e: React.DragEvent<HTMLDivElement>) => {
-        setDraggedShip((prev) => prev && { ...prev, position: { x: e.pageX, y: e.pageY } });
-    };
-
-    const dragEnd = () => {
-        document.body.style.cursor = 'auto';
-        // setDraggedShip(undefined);
-
-        const newBoard = player1!.board.map(cell => ({ ...cell, highlight: '' }));
-        setPlayer1(prev => prev && { ...prev, board: newBoard });
-    }
-
-    return (
+const ShipSelection = ({ ships }: { ships: Ship[] }) => {
+  return (
+    <>
+        <CustomDragLayer />
         <div className="flex flex-wrap justify-evenly mx-auto p-4 gap-4">
-            {ships.filter((ship, index, self) => index === self.findIndex((s) => s.name === ship.name)).map((ship, indx) => {
-                return (
-                    <div key={indx} className="flex flex-col items-center gap-0.5 text-sm">
-                        <div 
-                            draggable
-                            onDragStart={(e) => dragStart(e, ship)}
-                            onDrag={(e) => drag(e)}
-                            onDragEnd={() => dragEnd()}
-                            className="flex items-center justify-center h-12 p-4 bg-zinc-700 rounded-md  ">
-                            <div className="mr-2 border border-2 px-2 rounded-full bg-zinc-500">
-                                {ships.reduce((prev, curr) => prev - (curr.name === ship.name ? (curr.placed ? 1 : 0) : 0), ship.quantity)}
-                            </div>
-                            <Image className="h-12"  src={ship.image} height={0} width={120} alt='dsd'/>
-                        </div>
-                        <div className="">
-                            {ship.name}
-                        </div>
-                    </div>
-                )
-            })}
-            {draggedShip && <DraggedItem ship={draggedShip} />}
+        {ships.filter((ship, index, self) => index === self.findIndex((s) => s.name === ship.name)).map((ship, indx) => {
+            const shipKindLeft = ships.reduce((prev, curr) => prev - (curr.name === ship.name ? (curr.placed ? 1 : 0) : 0), ship.quantity);
+            return (
+                <Ship key={ship.id} ship={ship} shipKindLeft={shipKindLeft} />
+            )
+        })}
         </div>
-    )
-}
-
-const DraggedItem = ({ ship }: { ship: Ship }) => {
-    const cellDimensions = { width: document.querySelector('.cell')?.getBoundingClientRect().width, height: document.getElementById('cell')?.getBoundingClientRect().height }
-    const height = ship.rotation === 'horizontal' ? cellDimensions.height ?? 34 : 34 * ship.length
-    const width= ship.rotation === 'horizontal' ? (cellDimensions.width ?? 34) * ship.length : 34
-    return (
-        <div
-            id='draggedShip'
-            className={` h-[${height}px] w-[${height}px]`}
-            style={{
-                position: 'absolute',
-                left: ship.position!.x - ((cellDimensions.width ?? 20) / 2) ,
-                top: ship.position!.y - ((cellDimensions.width ?? 20) / 2) ,
-                pointerEvents: 'none',
-                opacity: 1,
-                transform: 'scale(1)',
-            }}
-        >
-            <Image height={height} width={width} alt={ship.name} src={ship.image}/>
-        </div>
-    );
+    </>
+  );
 };
+
+const Ship = ({ ship, shipKindLeft }: { ship: Ship; shipKindLeft: number }) => {
+    const [{ isDragging, mousePosition }, drag, preview] = useDrag(() => ({
+      type: 'SHIP',
+      item: ship,
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+      end: (item, monitor) => {
+        // const dropPosition = monitor.getClientOffset(); // Get the location of the cursor
+        // if (dropPosition) {
+          // Handle the position (e.g., align to grid, update state)
+        // }
+      },
+    }));
+
+    useEffect(() => {
+        preview(getEmptyImage(), { captureDraggingState: true })
+      }, [preview])
+  
+    return (
+      <div className="flex flex-col items-center gap-0.5 text-sm">
+        <div
+          ref={drag}
+          className={`flex items-center cursor-grab justify-center h-12 p-4 ${shipKindLeft > 0 ? 'bg-slate-300' : 'bg-slate-500'} rounded-md`}
+        >
+          <Image className="h-12" src={ship.image} height={0} width={120} alt={ship.name} />
+        </div>
+        <div className="tracking-wider select-none">
+          {ship.name + ' ' + '(' + shipKindLeft + ')'}
+        </div>
+      </div>
+    );
+  };
+
+export default ShipSelection;
