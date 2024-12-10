@@ -4,9 +4,7 @@ import Battleship from "./components/Battleship";
 export default function Home() {
     return (
         <BattleshipProvider>
-            <div className="">
-                <Battleship />
-            </div>
+            <Battleship />
         </BattleshipProvider>
     );
   }

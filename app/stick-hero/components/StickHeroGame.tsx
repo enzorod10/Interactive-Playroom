@@ -131,7 +131,7 @@ const StickHeroGame = () => {
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
       className='w-full h-full flex justify-center bg-[#8ecae6] touch-none select-none'
-      style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }} // Disable default behaviors
+      style={{ userSelect: 'none', WebkitUserSelect: 'none', WebkitTouchCallout: 'none' }}
     >
       <Stage style={{touchAction: 'none'}} width={(width! > 800 ? 800 : width!)} height={canvaHeight} options={{ backgroundColor: 0x8ecae6 }}>
         {/* Platform 1 */}

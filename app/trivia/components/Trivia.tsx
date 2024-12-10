@@ -63,7 +63,7 @@ export default function Trivia() {
     };
 
     return (
-        <div className="h-[calc(100dvh-64px)] w-full overflow-hidden">
+        <div className="w-full overflow-hidden">
             {!quizStarted ? (
                 <div className='flex flex-col h-full p-4 sm:mx-auto max-w-2xl justify-evenly gap-4'>
                     <div className='flex flex-col gap-4 overflow-hidden'>

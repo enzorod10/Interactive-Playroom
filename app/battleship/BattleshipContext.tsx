@@ -26,7 +26,7 @@ export const BattleshipProvider: React.FC<{ children: React.ReactNode }> = ({ ch
     const beginGame = (mode: 'single_player' | 'multi_player') => {
         setPlayer1(createPlayer('Player 1'))
         setPlayer2(createPlayer(mode === 'single_player' ? 'Bot' : 'Player 2'))
-        setGameState(mode === 'single_player' ? 'singleplayer_p1_place_ships' : 'multiplayer_p1_place_ships');
+        setGameState('p1_place_ships');
     }
 
     return (

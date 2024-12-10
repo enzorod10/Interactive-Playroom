@@ -38,7 +38,7 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="w-full fixed justify-between h-16 flex items-center px-4 ">
+            <div className="w-full justify-between h-16 flex items-center px-4 ">
               <Link href='/'>
                 <Avatar className="w-14 h-14">
                   <AvatarImage src="website_icon.png" />
@@ -46,7 +46,7 @@ export default function RootLayout({
               </Link>
               <ModeToggle />
             </div>
-            <div className="pt-16 min-h-screen">
+            <div className="h-[calc(100dvh-64px)] overflow-hidden">
               {children}
             </div>
         </ThemeProvider>

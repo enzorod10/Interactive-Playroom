@@ -1,7 +1,8 @@
 
 export interface Player{
-    name: string;
+    name: 'Player 1' | 'Player 2' | 'Bot';
     board: Cell[];
+    boardImage?: HTMLDivElement; 
     ships: Ship[];
 }
 
@@ -25,4 +26,4 @@ export interface Ship{
     position?: { x: number, y: number}
 }
 
-export type GameState = 'menu' | 'choose_difficulty' | 'singleplayer_p1_place_ships' | 'multiplayer_p1_place_ships' | 'multiplayer_p2_place_ships'
+export type GameState = 'menu' | 'choose_difficulty' | 'p1_place_ships' | 'p2_place_ships' | 'p1_attack' | 'p2_attack'
