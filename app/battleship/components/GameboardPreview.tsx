@@ -1,4 +1,4 @@
-import { GameState, Player } from "../types";
+import { GameState, Player, Ship } from "../types";
 import Cell from "./CellAttackPhase";
 
 
@@ -34,17 +34,21 @@ export default function GameboardPreview({ player }: { player?: Player }) {
         );
       })} */}
       {player!.board.map((cell, indx) => (
-        <CellPreview key={indx} x={cell.x} y={cell.y} />
+        <CellPreview key={indx} x={cell.x} y={cell.y} hit={cell.hit} ship={cell.ship} />
       ))}
     </div>
   );
 }
 
 
-export  function CellPreview({ x, y, }: { x: number, y: number }) {
-    return (
-      <div data-x={x} data-y={y} className={`cellPreview border h-4 w-4 sm:h-6 sm:w-6 border-slate-100/50 `}>
-          
-      </div>
-    );
-  }
+export function CellPreview({ x, y, hit, ship}: { x: number, y: number, hit: boolean, ship?: Ship}) {
+  const cellStyle = 'cellPreview border h-4 w-4 sm:h-6 sm:w-6 border-slate-100/50'
+  const hitStyle = hit && 'bg-zinc-700'
+  const shipHitStyle = (hit && ship) && 'bg-blast bg-contain bg-center'
+
+  return (
+    <div data-x={x} data-y={y} className={`${cellStyle} ${hitStyle} ${shipHitStyle}`}>
+        
+    </div>
+  );
+}

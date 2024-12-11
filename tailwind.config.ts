@@ -9,7 +9,7 @@ const config: Config = {
   ],
   theme: {
   	extend: {
-		backgroundImage: { 'ocean': "url('/ocean.jpg')", 'ocean2': "url('/ocean2.jpg')" },
+		backgroundImage: { 'ocean': "url('/ocean.jpg')", 'ocean2': "url('/ocean2.jpg')", 'blast': "url('/blast.png')" },
 		colors: {
 			border: "hsl(var(--border))",
 			input: "hsl(var(--input))",

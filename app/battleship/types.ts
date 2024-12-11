@@ -2,7 +2,6 @@
 export interface Player{
     name: 'Player 1' | 'Player 2' | 'Bot';
     board: Cell[];
-    boardImage?: HTMLDivElement; 
     ships: Ship[];
 }
 

@@ -2,14 +2,15 @@
 import { HTML5toTouch } from 'rdndmb-html5-to-touch'
 import { DndProvider } from 'react-dnd-multi-backend'
 import Gameboard from "./Gameboard";
-import P2GameboardAttackPhase from './P2GameboardAttackPhase';
-import P1GameboardAttackPhase from './P1GameboardAttackPhase';
+import P2GameboardAttackPhase from './P1GameboardAttackPhase';
+import P1GameboardAttackPhase from './P2GameboardAttackPhase';
 import ShipSelection from "./ShipSelection";
 import { useBattleshipContext } from "../BattleshipContext";
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import GameboardPreview from './GameboardPreview';
 import GameDetails from './GameDetails';
+import GameboardAttackPhase from './GameboardAttackPhase';
 
 // document.addEventListener("dragover", (event) => {
 //     event.preventDefault();
@@ -67,7 +68,7 @@ export default function Battleship() {
 
         return (
             <DndProvider options={HTML5toTouch}>
-                <div className="h-[calc(100dvh-64px)] overflow-hidden max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4 select-none">
+                <div className="h-[calc(100dvh-64px)] justify-center overflow-hidden max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4 select-none">
                     <p className='text-sm '>
                         Player {gameState === 'p1_place_ships' ? '1' : '2'} place your ships.
                     </p>
@@ -81,15 +82,10 @@ export default function Battleship() {
 
     if (gameState === 'p1_attack' || 'p2_attack'){
         return (
-            <div className="h-[calc(100dvh-64px)] overflow-hidden max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4 select-none">
-                {gameState === 'p1_attack' && 
-                    <P2GameboardAttackPhase gameState={gameState} player1={player1!} setPlayer1={setPlayer1!} player2={player2!} setPlayer2={setPlayer2!}/>
-                }
-                {gameState === 'p2_attack' && 
-                    <P1GameboardAttackPhase gameState={gameState} player1={player1!} setPlayer1={setPlayer1!} player2={player2!} setPlayer2={setPlayer2!}/>
-                }
-                <div className='flex h-full w-full sm:w-fit items-center justify-evenly px-2 border bg-slate-700'>
-                    <GameDetails player1={player1!} player2={player2!} />
+            <div className="h-[calc(100dvh-64px)] overflow-hidden justify-center max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4 select-none">
+                <GameboardAttackPhase gameState={gameState} setGameState={setGameState} player1={player1!} setPlayer1={setPlayer1!} player2={player2!} setPlayer2={setPlayer2!}/>
+                <div className={`flex w-full shadow-inner sm:w-fit items-center justify-evenly ${gameState === 'p1_attack' && 'bg-blue-700/10'} ${gameState === 'p2_attack' && 'bg-red-700/10'} tracking-wider p-2 sm:p-4 rounded text-primary`}>
+                    <GameDetails player1={player1!} player2={player2!} gameState={gameState} />
                     <GameboardPreview player={gameState === 'p1_attack' ? player1 : player2}/>
                 </div>
             </div>
