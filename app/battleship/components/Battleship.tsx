@@ -2,8 +2,6 @@
 import { HTML5toTouch } from 'rdndmb-html5-to-touch'
 import { DndProvider } from 'react-dnd-multi-backend'
 import Gameboard from "./Gameboard";
-import P2GameboardAttackPhase from './P1GameboardAttackPhase';
-import P1GameboardAttackPhase from './P2GameboardAttackPhase';
 import ShipSelection from "./ShipSelection";
 import { useBattleshipContext } from "../BattleshipContext";
 import { Button } from '@/components/ui/button';
@@ -59,7 +57,7 @@ export default function Battleship() {
     if (gameState === 'p1_place_ships' || gameState === 'p2_place_ships'){
         const allShipsPlaced = (gameState === 'p1_place_ships' ? player1! : player2!).ships.every(ship => ship.placed)
         const moveToNextStage = () => {
-            if (gameState === 'p1_place_ships'){
+            if (gameState === 'p1_place_ships' && player2?.name !== 'Bot'){
                 setGameState('p2_place_ships')
             } else {
                 setGameState('p1_attack')
@@ -86,7 +84,7 @@ export default function Battleship() {
                 <GameboardAttackPhase gameState={gameState} setGameState={setGameState} player1={player1!} setPlayer1={setPlayer1!} player2={player2!} setPlayer2={setPlayer2!}/>
                 <div className={`flex w-full shadow-inner sm:w-fit items-center justify-evenly ${gameState === 'p1_attack' && 'bg-blue-700/10'} ${gameState === 'p2_attack' && 'bg-red-700/10'} tracking-wider p-2 sm:p-4 rounded text-primary`}>
                     <GameDetails player1={player1!} player2={player2!} gameState={gameState} />
-                    <GameboardPreview player={gameState === 'p1_attack' ? player1 : player2}/>
+                    <GameboardPreview player={gameState === 'p1_attack' ? player1! : player2!} gameState={gameState} />
                 </div>
             </div>
         )

@@ -1,8 +1,8 @@
 'use client';
 import Image from "next/image";
-import { Player, Ship as ShipType } from "../types";
+import { Player } from "../types";
 import { useDrag } from 'react-dnd';
-import React, { useEffect } from 'react';
+import React, { LegacyRef, useEffect } from 'react';
 import { getEmptyImage } from 'react-dnd-html5-backend';
 import { CustomDragLayer } from "../CustomDragLayer";
 
@@ -45,7 +45,7 @@ const Ship = ({ shipName, shipImage, shipKindLeft, player }: ShipPropTypes) => {
     return (
       <div className="flex flex-col items-center gap-0.5 text-sm">
         <div
-          ref={drag}
+          ref={drag as unknown as LegacyRef<HTMLDivElement>}
           className={`flex items-center cursor-grab justify-center h-12 p-4 ${shipKindLeft > 0 ? 'bg-slate-300' : 'bg-slate-500'} rounded-md`}
         >
           <Image className="h-12" src={shipImage} height={0} width={120} alt={shipName} />

@@ -20,7 +20,7 @@ export default function GameDetails({ player1, player2, gameState }: { player1: 
         <div key={indx} className='flex justify-center'>
             {ships.map((ship) => {
                 return(
-                    <Image key={ship.id} className="h-4 " src={ship.image} height={0} width={50} alt={ship.name} />
+                    <Image key={ship.id} className="h-4 filter grayscale" src={ship.image} height={0} width={50} alt={ship.name} />
                 )})}
         </div>
     ));

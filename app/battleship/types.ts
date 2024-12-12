@@ -25,4 +25,4 @@ export interface Ship{
     position?: { x: number, y: number}
 }
 
-export type GameState = 'menu' | 'choose_difficulty' | 'p1_place_ships' | 'p2_place_ships' | 'p1_attack' | 'p2_attack'
+export type GameState = 'menu' | 'choose_difficulty' | 'p1_place_ships' | 'p2_place_ships' | 'p1_attack' | 'p2_attack' | 'end'
