@@ -85,8 +85,8 @@ export default function GameboardAttackPhase({ player1, player2, setPlayer1, set
                 return;
             }
     
-            setTimeout(() => setGameState(gameState === 'p1_attack' ? 'p2_attack' : 'p1_attack'), 1000);
             setTimeout(() => setHittingAnimation(false), 1000);
+            setTimeout(() => setGameState(gameState === 'p1_attack' ? 'p2_attack' : 'p1_attack'), 1000);
         },
         [gameState, hittingAnimation, player1, player2, setGameState, setPlayer1, setPlayer2]
     );

@@ -2,11 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 
 const projArr = [ { name: 'Stick Hero', url: 'stick-hero', img: 'stick_hero.PNG', className: 'px-2 pt-2' },
+  { name: 'Battleship', url: 'battleship', img: 'battleship.png', className:'px-2 pt-2'},
+  { name: 'Hangman', url: 'hangman', img: 'hangman.png', className: 'py-2'},
+  { name: 'Puzzle', url: 'puzzle', img: 'puzzle.png', className: 'px-2 pt-2' },
   { name: 'Wordle', url: 'wordle', img: 'wordle.PNG', className:'px-2 pt-2' },
   { name: 'Trivia', url: 'trivia', img: 'trivia.jpg', className: 'px-2 pt-2'},
-  { name: 'Puzzle', url: 'puzzle', img: 'puzzle.png', className: 'px-2 pt-2' },
-  { name: 'Hangman', url: 'hangman', img: 'hangman.png', className: 'py-2'},
-  { name: 'Battleship', url: 'battleship', img: 'battleship.png', className:'px-2 pt-2'}
  ]
 
 export default function Home() {
