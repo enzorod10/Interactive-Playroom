@@ -1,6 +1,7 @@
 
 export interface Player{
     name: 'Player 1' | 'Player 2' | 'Bot';
+    difficulty?: 'NOVICE' | 'EXPERT';
     board: Cell[];
     ships: Ship[];
 }

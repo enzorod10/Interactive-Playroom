@@ -27,7 +27,7 @@ export default function GameboardPreview({ player, gameState }: { player: Player
                 }}
                 className={`absolute fadeIn border cursor-pointer ${gameState === 'p1_attack' ? 'bg-red-500': 'bg-blue-500' }`}
                 >
-                    <Image className="scale-95" height={height} width={width} alt={ship.name} src={ship.image} />
+                    <Image className="scale-95" height={height} width={width} alt={ship.name} src={'/' + (ship.name.split(' ').length > 1 ? ship.name.split(' ')[0].toLowerCase() + '-' + ship.name.split(' ')[1].toLowerCase() : ship.name.toLowerCase()) + '-' + ship.rotation + '.svg'} />
                 </div>
             )
         );

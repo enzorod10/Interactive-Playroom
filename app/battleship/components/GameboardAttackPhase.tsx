@@ -5,7 +5,7 @@ import Cell from "./CellAttackPhase";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface GameboardAttackPhaseProps {
     player1: Player; 
@@ -17,7 +17,7 @@ interface GameboardAttackPhaseProps {
 }
 
 export default function GameboardAttackPhase({ player1, player2, setPlayer1, setPlayer2, gameState, setGameState }: GameboardAttackPhaseProps) {
-
+    const [targetQueue, setTargetQueue] = useState<{ x: number; y: number }[]>([]);
     const [hittingAnimation, setHittingAnimation] = useState(false);
 
     const router = useRouter();
@@ -30,54 +30,105 @@ export default function GameboardAttackPhase({ player1, player2, setPlayer1, set
     // const attackingPlayer = gameState === 'p1_attack' ? {...player1} : {...player2}
     const defendingPlayer = gameState === 'p1_attack' ? {...player2} : {...player1}
 
-    const handleHit = useCallback(({ x, y }: { x: number, y: number }) => {
-        const defendingPlayer = gameState === 'p1_attack' ? {...player2} : {...player1}
+    const handleHit = useCallback(
+        ({ x, y }: { x: number, y: number }) => {
+            console.log({hittingAnimation})
+            const defendingPlayer = gameState === 'p1_attack' ? { ...player2 } : { ...player1 };
+    
+            if ((gameState !== 'p1_attack' && gameState !== 'p2_attack') || hittingAnimation) return;
+    
+            const cellHitIndx = defendingPlayer.board.findIndex((cell) => {
+                return cell.x === x && cell.y === y;
+            });
 
-        if ((gameState !== 'p1_attack' && gameState !== 'p2_attack') || hittingAnimation) return;
+    
+            if (cellHitIndx === -1 || defendingPlayer.board[cellHitIndx].hit) return;
+    
+            defendingPlayer.board[cellHitIndx].hit = true;
+    
+            if (defendingPlayer.board[cellHitIndx].ship) {
+                const shipIndex = defendingPlayer.ships.findIndex(
+                    (ship) => ship.id === defendingPlayer.board[cellHitIndx].ship!.id
+                );
+                defendingPlayer.ships[shipIndex].hitCount++;
 
-        const cellHitIndx = defendingPlayer.board.findIndex(cell => {
-            return (cell.x === x && cell.y === y)
-        })  
+                if (defendingPlayer.ships[shipIndex].hitCount < defendingPlayer.ships[shipIndex].length) {
+                    const newTargets = [
+                        { x: x - 1, y }, // Left
+                        { x: x + 1, y }, // Right
+                        { x, y: y - 1 }, // Up
+                        { x, y: y + 1 }, // Down
+                    ].filter(
+                        (cell) =>
+                            cell.x >= 0 &&
+                            cell.x < 10 &&
+                            cell.y >= 0 &&
+                            cell.y < 10 &&
+                            !player1.board.some((c) => c.x === cell.x && c.y === cell.y && c.hit)
+                    );
+                
+                    setTargetQueue((prev) => [...prev, ...newTargets]);
+                }
+            }
+    
+            if (gameState === 'p1_attack') {
+                setPlayer2({ ...defendingPlayer });
+            } else {
+                setPlayer1({ ...defendingPlayer });
+            }
+    
+            setHittingAnimation(true);
 
-        if (cellHitIndx === -1 || defendingPlayer.board[cellHitIndx].hit) return;
+            // Check end game
+            if (!defendingPlayer.ships.find((ship) => ship.hitCount < ship.length)) {
+                setTimeout(() => setGameState('end'), 1000);
+                return;
+            }
+    
+            setTimeout(() => setGameState(gameState === 'p1_attack' ? 'p2_attack' : 'p1_attack'), 1000);
+            setTimeout(() => setHittingAnimation(false), 1000);
+        },
+        [gameState, hittingAnimation, player1, player2, setGameState, setPlayer1, setPlayer2]
+    );
 
-        defendingPlayer.board[cellHitIndx].hit = true
-
-        if (defendingPlayer.board[cellHitIndx].ship){
-            const shipIndex = defendingPlayer.ships.findIndex((ship) => ship.id === defendingPlayer.board[cellHitIndx].ship!.id)
-            defendingPlayer.ships[shipIndex].hitCount ++;
-        }
-
-        if (gameState === 'p1_attack'){
-            setPlayer2({...defendingPlayer})
-        } else {
-            setPlayer1({...defendingPlayer})
-        }
-
-        setHittingAnimation(true);
-
-        if (!defendingPlayer.ships.find(ship => ship.hitCount < ship.length)){
-            setTimeout(() => setGameState('end'), 1000)
-            return
-        }
-
-        setTimeout(() => setGameState(gameState === 'p1_attack' ? 'p2_attack' : 'p1_attack' ), 1000)
-        setTimeout(() => setHittingAnimation(false), 1000);
-    }, [gameState, hittingAnimation, player1, player2, setGameState, setPlayer1, setPlayer2])
+    const hasFiredRef = useRef(false);
 
     useEffect(() => {
-        if (gameState === 'p2_attack' && player2.name === 'Bot'){
-            if (gameState !== 'p2_attack') return;
-    
-            const unhitCells = player1.board.filter((cell) => !cell.hit);
-            if (unhitCells.length === 0) return;
+    if (gameState === 'p2_attack' && player2.name === 'Bot' && !hasFiredRef.current) {
+        hasFiredRef.current = true; // Prevent multiple actions this turn
+
+        if (player2.difficulty === 'EXPERT' && targetQueue.length > 0) {
+            let nextTarget = targetQueue[0];
         
-            // Basic AI: Random cell selection
-            const randomCell = unhitCells[Math.floor(Math.random() * unhitCells.length)];
+            // Remove invalid targets (already hit) from the queue
+            while (
+                targetQueue.length > 0 &&
+                player1.board.some((cell) => cell.x === nextTarget.x && cell.y === nextTarget.y && cell.hit)
+            ) {
+                targetQueue.shift(); // Remove the invalid target
+                nextTarget = targetQueue[0]; // Update to the new first target
+            }
         
-            setTimeout(() => handleHit({ x: randomCell.x, y: randomCell.y }), 500);
+            if (nextTarget) {
+                setTargetQueue((prev) => prev.slice(1)); // Remove from queue
+                setTimeout(() => {
+                    handleHit(nextTarget);
+                    hasFiredRef.current = false; // Reset for the next turn
+                }, 500);
+                return;
+            }
         }
-    }, [gameState, handleHit, player1.board, player2.name])
+
+        const unhitCells = player1.board.filter((cell) => !cell.hit);
+        if (unhitCells.length === 0) return;
+
+        const randomCell = unhitCells[Math.floor(Math.random() * unhitCells.length)];
+        setTimeout(() => {
+            handleHit({ x: randomCell.x, y: randomCell.y });
+            hasFiredRef.current = false; 
+        }, 500);
+    }
+}, [gameState, handleHit, player1.board, player2.name, player2.difficulty, targetQueue]);
 
     return (
         <div
@@ -100,7 +151,7 @@ export default function GameboardAttackPhase({ player1, player2, setPlayer1, set
                         }}
                         className={`absolute fadeIn border cursor-pointer ${gameState === 'p1_attack' ? 'bg-blue-500': 'bg-red-500' }`}
                         >
-                            <Image className="scale-95" height={height} width={width} alt={ship.name} src={ship.image} />
+                            <Image className="scale-95" height={height} width={width} alt={ship.name} src={'/' + (ship.name.split(' ').length > 1 ? ship.name.split(' ')[0].toLowerCase() + '-' + ship.name.split(' ')[1].toLowerCase() : ship.name.toLowerCase()) + '-' + ship.rotation + '.svg'}  />
                         </div>
                     )
                 );

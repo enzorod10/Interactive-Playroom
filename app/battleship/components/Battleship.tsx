@@ -40,10 +40,10 @@ export default function Battleship() {
 
                         {gameState === 'choose_difficulty' &&
                         <div className='w-max mx-auto flex flex-col gap-1.5'>
-                            <div onClick={() => beginGame('single_player')} className="cursor-pointer bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-lg tracking-wide text-xs sm:text-md">
+                            <div onClick={() => beginGame('single_player', 'NOVICE')} className="cursor-pointer bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-lg tracking-wide text-xs sm:text-md">
                                 NOVICE
                             </div>
-                            <div onClick={() => beginGame('single_player')} className="cursor-pointer bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-lg tracking-wide text-xs sm:text-md">
+                            <div onClick={() => beginGame('single_player', 'EXPERT')} className="cursor-pointer bg-blue-500 hover:bg-blue-400 text-white font-bold py-1 px-2 sm:py-2 sm:px-4 border-b-4 border-blue-700 hover:border-blue-500 rounded-lg tracking-wide text-xs sm:text-md">
                                 EXPERT
                             </div>
                         </div>}

@@ -1,7 +1,7 @@
 import { Ship } from '../types';
 import { useDrop } from 'react-dnd';
 import { useBattleshipContext } from "../BattleshipContext";
-import { useCallback, useEffect } from 'react';
+import { LegacyRef, useCallback, useEffect } from 'react';
 
 export default function Cell({ x, y, highlight, ship }: { x: number, y: number, ship?: Ship, highlight: string }) {
   const { player1, setPlayer1, player2, setPlayer2, gameState } = useBattleshipContext();
@@ -120,7 +120,7 @@ export default function Cell({ x, y, highlight, ship }: { x: number, y: number, 
   }, [clearHighlights, didDrop])
 
   return (
-    <div ref={drop} data-x={x} data-y={y} className={`cell ${ship ? 'border-none' : ''} border border-slate-100/50 h-8 w-8 sm:h-10 sm:w-10 md:w-12 md:h-12 ${highlight}`}>
+    <div ref={drop as unknown as LegacyRef<HTMLDivElement>} data-x={x} data-y={y} className={`cell ${ship ? 'border-none' : ''} border border-slate-100/50 h-8 w-8 sm:h-10 sm:w-10 md:w-12 md:h-12 ${highlight}`}>
         
     </div>
   );
