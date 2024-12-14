@@ -4,18 +4,16 @@ import { DndProvider } from 'react-dnd-multi-backend'
 import Gameboard from "./Gameboard";
 import ShipSelection from "./ShipSelection";
 import { useBattleshipContext } from "../BattleshipContext";
-import { Button } from '@/components/ui/button';
 import Image from 'next/image';
 import GameboardPreview from './GameboardPreview';
 import GameDetails from './GameDetails';
 import GameboardAttackPhase from './GameboardAttackPhase';
-
-// document.addEventListener("dragover", (event) => {
-//     event.preventDefault();
-// });
+import { ArrowRight } from 'lucide-react';
 
 export default function Battleship() {
     const { gameState, setGameState, beginGame, player1, player2, setPlayer1, setPlayer2 } = useBattleshipContext();
+
+    const boardWidth = document.getElementById('board')?.getBoundingClientRect().width
 
     if (gameState === 'menu' || gameState === 'choose_difficulty'){
         return(
@@ -67,12 +65,14 @@ export default function Battleship() {
         return (
             <DndProvider options={HTML5toTouch}>
                 <div className="h-[calc(100dvh-64px)] justify-center overflow-hidden max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4 select-none">
-                    <p className='text-sm '>
-                        Player {gameState === 'p1_place_ships' ? '1' : '2'} place your ships.
-                    </p>
+                    <div style={{width: boardWidth}} className={`relative flex items-center`}>
+                        <span className='mx-auto text-sm'>
+                            Player {gameState === 'p1_place_ships' ? '1' : '2'} place your ships.
+                        </span>
+                        {allShipsPlaced && <ArrowRight className='absolute cursor-pointer right-0' onClick={() => moveToNextStage()}/>}
+                    </div>
                     <Gameboard gameState={gameState} player={gameState === 'p1_place_ships' ? player1! : player2!}/>
                     <ShipSelection player={gameState === 'p1_place_ships' ? player1! : player2!}/>
-                    <Button disabled={!allShipsPlaced} onClick={() => moveToNextStage()}>NEXT</Button>
                 </div>
             </DndProvider>
         )
@@ -82,7 +82,7 @@ export default function Battleship() {
         return (
             <div className="h-[calc(100dvh-64px)] overflow-hidden justify-center max-w-screen-2xl mx-auto py-4 flex flex-col items-center gap-4 select-none">
                 <GameboardAttackPhase gameState={gameState} setGameState={setGameState} player1={player1!} setPlayer1={setPlayer1!} player2={player2!} setPlayer2={setPlayer2!}/>
-                <div className={`flex w-full shadow-inner sm:w-fit items-center justify-evenly ${gameState === 'p1_attack' && 'bg-blue-700/10'} ${gameState === 'p2_attack' && 'bg-red-700/10'} tracking-wider p-2 sm:p-4 rounded text-primary`}>
+                <div className={`flex w-full shadow-md sm:w-fit items-center justify-evenly ${gameState === 'p1_attack' && 'bg-blue-300/70'} ${gameState === 'p2_attack' && 'bg-red-300/70'} tracking-wider p-2 sm:p-4  text-primary`}>
                     <GameDetails player1={player1!} player2={player2!} gameState={gameState} />
                     <GameboardPreview player={gameState === 'p1_attack' ? player1! : player2!} gameState={gameState} />
                 </div>

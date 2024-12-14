@@ -43,15 +43,18 @@ const Ship = ({ shipName, shipImage, shipKindLeft, player }: ShipPropTypes) => {
     }, [preview])
   
     return (
-      <div className="flex flex-col items-center gap-0.5 text-sm">
+      <div className="flex flex-col items-center gap-0.5 text-xs md:text-sm ">
         <div
           ref={drag as unknown as LegacyRef<HTMLDivElement>}
-          className={`flex items-center cursor-grab justify-center h-12 p-4 ${shipKindLeft > 0 ? 'bg-slate-300' : 'bg-slate-500'} rounded-md`}
+          className={`flex items-center cursor-grab justify-center h-8 sm:h-10 lg:h-12 p-4 ${shipKindLeft > 0 ? 'bg-slate-300' : 'bg-slate-500'} rounded-md`}
         >
-          <Image className="h-12" src={shipImage} height={0} width={120} alt={shipName} />
+          <Image className="h-8 sm:h-10 lg:h-12 " src={shipImage} height={0} width={120} alt={shipName} />
         </div>
-        <div className="tracking-wider select-none">
-          {shipName + ' ' + '(' + shipKindLeft + ')'}
+        <div className="tracking-wide select-none flex gap-1">
+          {shipName} 
+          <span className="flex gap-0.5 items-center">
+            <span>{'['}</span> <span className="text-xs leading-none">{shipKindLeft}</span><span>{']'}</span>
+          </span>
         </div>
       </div>
     );

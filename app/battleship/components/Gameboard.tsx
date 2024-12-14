@@ -11,7 +11,7 @@ export default function Gameboard({ player, gameState }: { player: Player; gameS
   return (
     <div
       className={`border ${gameState === 'p1_place_ships' ? 'bg-ocean' : 'bg-ocean2'} rounded-md grid grid-cols-10 w-fit relative`}
-      id="cell"
+      id="board"
     >
       {(gameState === 'p1_place_ships' || gameState === 'p2_place_ships') && player?.ships.map((ship) => {
         const width = ship.rotation === 'horizontal' ? cellDimensions.width * ship.length : cellDimensions.width;
