@@ -1,3 +1,4 @@
+'use client';
 import { BattleshipProvider } from "./BattleshipContext";
 import Battleship from "./components/Battleship";
 
