@@ -1,5 +1,5 @@
-/* eslint-disable @next/next/no-img-element */
 'use client';
+/* eslint-disable @next/next/no-img-element */
 import Image from "next/image";
 import { GameState, Player } from "../types";
 import Cell from "./CellAttackPhase";
