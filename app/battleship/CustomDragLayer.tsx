@@ -1,3 +1,4 @@
+'use client';
 import { useDragLayer } from 'react-dnd';
 import { DraggableShip } from './components/DraggableShip';
 
