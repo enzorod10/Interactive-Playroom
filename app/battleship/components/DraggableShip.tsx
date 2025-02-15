@@ -1,12 +1,22 @@
 'use client';
 import Image from "next/image";
 import { Ship } from '../types';
+import { useState, useEffect } from 'react';
 
 export const DraggableShip = ({ ship }: { ship: Ship }) => {
-    const cellDimensions = { width: document.querySelector('.cell')?.getBoundingClientRect().width, height: document.getElementById('cell')?.getBoundingClientRect().height };
-    const height = ship.rotation === 'horizontal' ? cellDimensions.height ?? 34 : 34 * ship.length;
-    const width = ship.rotation === 'horizontal' ? (cellDimensions.width ?? 34) * ship.length : 34;
-  
+    const [cellDimensions, setCellDimensions] = useState({ width: 34, height: 34 });
+
+    useEffect(() => {
+        const cell = document.querySelector('.cell');
+        if (cell) {
+            const { width, height } = cell.getBoundingClientRect();
+            setCellDimensions({ width, height });
+        }
+    }, []);
+
+    const height = ship.rotation === 'horizontal' ? cellDimensions.height : cellDimensions.height * ship.length;
+    const width = ship.rotation === 'horizontal' ? cellDimensions.width * ship.length : cellDimensions.width;
+
     return (
       <div
         id="draggedShip"
@@ -19,4 +29,4 @@ export const DraggableShip = ({ ship }: { ship: Ship }) => {
         <Image height={height} width={width} alt={ship.name} src={ship.image} />
       </div>
     );
-  };
+};

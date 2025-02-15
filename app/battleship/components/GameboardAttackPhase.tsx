@@ -20,15 +20,18 @@ interface GameboardAttackPhaseProps {
 export default function GameboardAttackPhase({ player1, player2, setPlayer1, setPlayer2, gameState, setGameState }: GameboardAttackPhaseProps) {
     const [targetQueue, setTargetQueue] = useState<{ x: number; y: number }[]>([]);
     const [hittingAnimation, setHittingAnimation] = useState(false);
+    const [cellDimensions, setCellDimensions] = useState({ width: 34, height: 34 });
 
     const router = useRouter();
 
-    const cellDimensions = {
-        width: document.querySelector('.cell')?.getBoundingClientRect()?.width ?? 34,
-        height: document.querySelector('.cell')?.getBoundingClientRect()?.height ?? 34,
-    };
+    useEffect(() => {
+        const cell = document.querySelector('.cell');
+        if (cell) {
+            const { width, height } = cell.getBoundingClientRect();
+            setCellDimensions({ width, height });
+        }
+    }, []);
     
-    // const attackingPlayer = gameState === 'p1_attack' ? {...player1} : {...player2}
     const defendingPlayer = gameState === 'p1_attack' ? {...player2} : {...player1}
 
     const handleHit = useCallback(

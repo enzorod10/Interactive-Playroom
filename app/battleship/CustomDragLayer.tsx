@@ -1,8 +1,19 @@
 'use client';
 import { useDragLayer } from 'react-dnd';
 import { DraggableShip } from './components/DraggableShip';
+import { useState, useEffect } from 'react';
 
 export const CustomDragLayer = () => {
+  const [cellDimensions, setCellDimensions] = useState({ width: 20, height: 20 });
+
+  useEffect(() => {
+    const cell = document.querySelector('.cell');
+    if (cell) {
+      const { width, height } = cell.getBoundingClientRect();
+      setCellDimensions({ width, height });
+    }
+  }, []);
+
   const { item, itemType, isDragging, currentOffset } = useDragLayer((monitor) => ({
     item: monitor.getItem(),
     itemType: monitor.getItemType(),
@@ -12,9 +23,7 @@ export const CustomDragLayer = () => {
 
   if (!isDragging || !currentOffset || itemType !== 'SHIP') return null;
 
-  const cellDimensions = { width: document.querySelector('.cell')?.getBoundingClientRect().width, height: document.getElementById('cell')?.getBoundingClientRect().height };
-  const thing = (cellDimensions.width ?? 20) / 2
-
+  const thing = cellDimensions.width / 2;
   const { x, y } = currentOffset;
 
   return (

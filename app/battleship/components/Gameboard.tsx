@@ -2,12 +2,18 @@
 import Image from "next/image";
 import { GameState, Player } from "../types";
 import Cell from './Cell';
+import { useState, useEffect } from 'react';
 
 export default function Gameboard({ player, gameState }: { player: Player; gameState: GameState }) {
-  const cellDimensions = {
-    width: document.querySelector('.cell')?.getBoundingClientRect()?.width ?? 34,
-    height: document.querySelector('.cell')?.getBoundingClientRect()?.height ?? 34,
-  };
+  const [cellDimensions, setCellDimensions] = useState({ width: 34, height: 34 });
+
+  useEffect(() => {
+    const cell = document.querySelector('.cell');
+    if (cell) {
+      const { width, height } = cell.getBoundingClientRect();
+      setCellDimensions({ width, height });
+    }
+  }, []);
 
   return (
     <div

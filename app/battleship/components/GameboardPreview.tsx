@@ -1,12 +1,18 @@
 'use client';
 import Image from "next/image";
 import { GameState, Player, Ship } from "../types";
+import { useState, useEffect } from 'react';
 
 export default function GameboardPreview({ player, gameState }: { player: Player, gameState: GameState }) {
-    const cellDimensions = {
-        width: document.querySelector('.cellPreview')?.getBoundingClientRect()?.width ?? 34,
-        height: document.querySelector('.cellPreview')?.getBoundingClientRect()?.height ?? 34,
-    };
+    const [cellDimensions, setCellDimensions] = useState({ width: 34, height: 34 });
+
+    useEffect(() => {
+        const cell = document.querySelector('.cellPreview');
+        if (cell) {
+            const { width, height } = cell.getBoundingClientRect();
+            setCellDimensions({ width, height });
+        }
+    }, []);
 
   return (
     <div
@@ -39,7 +45,6 @@ export default function GameboardPreview({ player, gameState }: { player: Player
     </div>
   );
 }
-
 
 export function CellPreview({ x, y, hit, ship}: { x: number, y: number, hit: boolean, ship?: Ship}) {
   const cellStyle = 'cellPreview border h-4 w-4 sm:h-6 sm:w-6 border-slate-100/50'
